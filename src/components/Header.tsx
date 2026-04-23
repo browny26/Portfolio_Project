@@ -1,17 +1,13 @@
 "use client";
 
 import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const navLinks = [
-  { label: "Projects", href: "/#projects" },
-  { label: "Services", href: "/#services" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Contact", href: "/contact" },
-];
+gsap.registerPlugin(ScrollToPlugin);
 
 export default function Header() {
   const headerRef = useRef<HTMLElement>(null);
@@ -19,7 +15,57 @@ export default function Header() {
   const menuLinksRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeHash, setActiveHash] = useState("");
   const pathname = usePathname();
+
+  const navLinks = [
+    { label: "Projects", href: menuOpen ? "/projects" : "/#projects" },
+    { label: "Services", href: "/#services" },
+    { label: "Skills", href: "/#skills" },
+    { label: "Experience", href: "/#experience" },
+    { label: "Contact", href: "/contact" },
+  ];
+
+  useEffect(() => {
+    const updateHash = () => setActiveHash(window.location.hash);
+
+    updateHash(); // iniziale
+    window.addEventListener("hashchange", updateHash);
+
+    return () => window.removeEventListener("hashchange", updateHash);
+  }, []);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const sections = navLinks
+      .filter((l) => l.href.startsWith("/#"))
+      .map((l) => document.getElementById(l.href.replace("/#", "")))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            setActiveHash(`#${id}`);
+
+            // aggiorna anche URL senza jump
+            window.history.replaceState(null, "", `#${id}`);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "-40% 0px -40% 0px",
+        threshold: 0,
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section!));
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   useEffect(() => {
     gsap.fromTo(
@@ -77,34 +123,60 @@ export default function Header() {
     href: string,
   ) => {
     setMenuOpen(false);
+
     if (href.startsWith("/#") && pathname === "/") {
       e.preventDefault();
+
+      const id = href.replace("/#", "");
+      const el = document.getElementById(id);
+
+      if (!el) return;
+
       setTimeout(() => {
-        document
-          .getElementById(href.replace("/#", ""))
-          ?.scrollIntoView({ behavior: "smooth" });
-      }, 600);
+        gsap.to(window, {
+          duration: 1.2,
+          scrollTo: {
+            y: el,
+            offsetY: 80,
+          },
+          ease: "power3.inOut",
+        });
+      }, 400);
     }
   };
 
-  const isActive = (href: string) =>
-    href === "/contact" ? pathname === "/contact" : false;
+  const isActive = (href: string) => {
+    if (href === "/contact") return pathname === "/contact";
+
+    if (href.startsWith("/#")) {
+      return activeHash === href.replace("/", "");
+    }
+
+    return false;
+  };
 
   return (
     <>
       {/* Header bar */}
       <header
         ref={headerRef}
-        className="fixed top-0 left-1/2 z-50 flex items-center justify-between w-full max-w-7xl"
+        className="fixed left-1/2 z-50 flex items-center justify-between w-full max-w-7xl"
         style={{
           transform: "translateX(-50%)",
           opacity: 0,
           padding: "1.1rem 2rem",
           transition:
-            "background 0.45s ease, border-color 0.45s ease, backdrop-filter 0.45s ease",
-          background: scrolled ? "rgba(245,243,239,0.88)" : "transparent",
+            "background 0.45s ease, border-color 0.45s ease, backdrop-filter 0.45s ease, top 0.45s ease, border-radius 0.45s ease",
+          background:
+            scrolled && !menuOpen ? "rgba(255,255,255,0.70)" : "transparent",
           backdropFilter: scrolled ? "blur(18px)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(18px)" : "none",
+          top: scrolled ? "1.5rem" : "0",
+          borderRadius: scrolled ? "4px" : "0",
+          border:
+            scrolled && !menuOpen
+              ? "1px solid #ececec"
+              : "1px solid transparent",
         }}
       >
         {/* Logo */}
@@ -113,6 +185,12 @@ export default function Header() {
           className="flex items-center gap-3 z-50 relative"
           style={{ textDecoration: "none" }}
         >
+          <Image
+            src="/imgs/noun-y2k-spark-6764461.png"
+            alt="Background pattern"
+            width={32}
+            height={32}
+          />
           <span
             className="label"
             style={{
@@ -120,7 +198,7 @@ export default function Header() {
               transition: "color 0.4s",
             }}
           >
-            LC Studio
+            LCO Studio
           </span>
         </Link>
 
@@ -131,7 +209,7 @@ export default function Header() {
               key={href}
               href={href}
               onClick={(e) => handleNavClick(e, href)}
-              className={`relative group inline-block ${isActive(href) ? "text-[#1a1a1a]" : "text-[#8c8680]"} hover:text-[#1a1a1a] transition-colors duration-200`}
+              className={`relative group inline-block ${isActive(href) ? ((pathname === "/contact" || pathname === "/projects") && !scrolled ? "text-cream" : "text-[#1a1a1a]") : "text-taupe"} hover:text-[#1a1a1a] transition-colors duration-200`}
               style={{ textDecoration: "none" }}
             >
               <span className="label" style={{ color: "inherit" }}>
@@ -139,7 +217,7 @@ export default function Header() {
               </span>
               {/* Underline reveal */}
               <span
-                className="absolute left-0 h-px bg-[#1a1a1a] transition-all duration-300 ease-out group-hover:w-full"
+                className={`absolute left-0 h-px ${(pathname === "/contact" || pathname === "/projects") && !scrolled ? "bg-cream" : "bg-[#1a1a1a]"} transition-all duration-300 ease-out group-hover:w-full`}
                 style={{
                   bottom: "-3px",
                   width: isActive(href) ? "100%" : "0%",
@@ -154,7 +232,7 @@ export default function Header() {
           {/* Contact button — desktop */}
           <Link
             href="/contact"
-            className="hidden md:inline-flex btn"
+            className="hidden md:inline-flex btn btn-filled"
             style={{
               fontSize: "0.72rem",
               padding: "0.55rem 1.1rem",
@@ -169,7 +247,7 @@ export default function Header() {
           {/* Burger — all screens */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="z-50 flex flex-col justify-center items-end gap-[5px] w-8 h-8"
+            className="z-50 flex flex-col justify-center items-end gap-1.25 w-8 h-8"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
           >
             <span
@@ -177,7 +255,12 @@ export default function Header() {
                 display: "block",
                 width: "1.4rem",
                 height: "1px",
-                background: menuOpen ? "#f5f3ef" : "#1a1a1a",
+                background:
+                  menuOpen ||
+                  ((pathname === "/contact" || pathname === "/projects") &&
+                    !scrolled)
+                    ? "#f5f3ef"
+                    : "#1a1a1a",
                 transition:
                   "transform 0.35s ease, background 0.4s, width 0.25s ease",
                 transformOrigin: "center",
@@ -189,7 +272,12 @@ export default function Header() {
                 display: "block",
                 width: "0.9rem",
                 height: "1px",
-                background: menuOpen ? "#f5f3ef" : "#1a1a1a",
+                background:
+                  menuOpen ||
+                  ((pathname === "/contact" || pathname === "/projects") &&
+                    !scrolled)
+                    ? "#f5f3ef"
+                    : "#1a1a1a",
                 transition:
                   "opacity 0.2s ease, background 0.4s, width 0.25s ease",
                 opacity: menuOpen ? 0 : 1,
@@ -200,7 +288,12 @@ export default function Header() {
                 display: "block",
                 width: "1.4rem",
                 height: "1px",
-                background: menuOpen ? "#f5f3ef" : "#1a1a1a",
+                background:
+                  menuOpen ||
+                  ((pathname === "/contact" || pathname === "/projects") &&
+                    !scrolled)
+                    ? "#f5f3ef"
+                    : "#1a1a1a",
                 transition:
                   "transform 0.35s ease, background 0.4s, width 0.25s ease",
                 transformOrigin: "center",
@@ -245,7 +338,7 @@ export default function Header() {
               }}
             >
               <span
-                className="label flex-shrink-0"
+                className="label shrink-0"
                 style={{ color: "rgba(245,243,239,0.28)", minWidth: "2.2rem" }}
               >
                 0{i + 1}
@@ -253,7 +346,7 @@ export default function Header() {
               <Link
                 href={href}
                 onClick={(e) => handleNavClick(e, href)}
-                className="hover:text-[#8c8680] transition-colors duration-200"
+                className="hover:text-taupe transition-colors duration-200"
                 style={{
                   fontSize: "clamp(2.2rem, 6.5vw, 5rem)",
                   fontWeight: 700,
@@ -292,6 +385,11 @@ export default function Header() {
               value: "luisa.cerinogbeiwi@gmail.com",
               href: "mailto:luisa.cerinogbeiwi@gmail.com",
             },
+            {
+              label: "Linkedin",
+              value: "luisa-cerin",
+              href: "https://linkedin.com/in/luisa-cerin",
+            },
             { label: "Location", value: "Milan, Italy", href: undefined },
           ].map(({ label, value, href }) => (
             <div
@@ -317,7 +415,7 @@ export default function Header() {
                     fontWeight: 500,
                     textDecoration: "none",
                   }}
-                  className="hover:text-[#f5f3ef] transition-colors"
+                  className="hover:text-cream transition-colors"
                 >
                   {value}
                 </a>

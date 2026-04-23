@@ -68,7 +68,10 @@ export default function Footer() {
               in mind?
             </div>
           </div>
-          <div className="overflow-clip mt-4" style={{ marginBlock: "1rem" }}>
+          <div
+            className="overflow-clip mt-4"
+            style={{ marginTop: "1rem", marginBottom: "3rem" }}
+          >
             <div className="reveal-line block">
               <Link
                 href="/contact"
@@ -92,7 +95,7 @@ export default function Footer() {
               Luisa Cerin Ogbeiwi
             </p>
             <p className="label mt-0.5">
-              Web Developer &amp; Designer · Milan, Italy
+              Software &amp; AI Developer · Milan, Italy
             </p>
           </div>
 

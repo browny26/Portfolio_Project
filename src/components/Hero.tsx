@@ -1,6 +1,7 @@
 "use client";
 
 import gsap from "gsap";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 export default function Hero() {
@@ -36,7 +37,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="bg-cream min-h-screen flex flex-col px-8 md:px-16"
+      className="bg-cream min-h-screen flex flex-col px-8 md:px-16 relative"
     >
       <div className="h-28" />
 
@@ -44,13 +45,13 @@ export default function Hero() {
         {[
           {
             ref: line1Ref,
-            text: "software & ai",
+            text: "Software & AI",
             textClass: "text-[#1a1a1a]",
             italic: false,
           },
           {
             ref: line2Ref,
-            text: "developer",
+            text: "Developer",
             textClass: "text-[#8c8680]",
             italic: true,
           },
@@ -70,6 +71,14 @@ export default function Hero() {
         ))}
       </div>
 
+      <Image
+        src="/imgs/noun-y2k-spark-6764461.png"
+        alt="Background pattern"
+        width={300}
+        height={300}
+        className="pointer-events-none select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"
+      />
+
       <div
         style={{
           borderTop: "1px solid color-mix(in srgb, #1a1a1a 12%, transparent)",
@@ -84,6 +93,7 @@ export default function Hero() {
             paddingInline: "2rem",
             maxWidth: "1440px",
             margin: "0 auto",
+            borderBottom: "1px solid #8c86801a",
           }}
           className="pt-6 w-full pb-10 mt-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
         >

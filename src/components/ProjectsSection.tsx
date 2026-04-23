@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { projects } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-import { projects } from "@/lib/data";
+import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,7 +26,7 @@ export default function ProjectsSection() {
             stagger: 0.1,
             ease: "power3.out",
             scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-          }
+          },
         );
       }
 
@@ -44,7 +44,7 @@ export default function ProjectsSection() {
               ease: "power3.out",
               scrollTrigger: { trigger: card, start: "top 85%" },
               delay: (i % 2) * 0.1,
-            }
+            },
           );
         });
       }
@@ -57,7 +57,9 @@ export default function ProjectsSection() {
       ref={sectionRef}
       id="work"
       className="section container"
-      style={{ borderTop: "1px solid color-mix(in srgb, #1a1a1a 12%, transparent)" }}
+      style={{
+        borderTop: "1px solid color-mix(in srgb, #1a1a1a 12%, transparent)",
+      }}
     >
       {/* Section header */}
       <div className="flex items-end justify-between mb-12 md:mb-16">
@@ -94,7 +96,9 @@ export default function ProjectsSection() {
       </div>
 
       <div className="mt-10 flex justify-center md:hidden">
-        <Link href="/projects" className="btn">View all projects</Link>
+        <Link href="/projects" className="btn">
+          View all projects
+        </Link>
       </div>
     </section>
   );
@@ -148,7 +152,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           </h3>
           <p className="label">{project.category}</p>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <span className="label">{project.year}</span>
         </div>
       </div>
@@ -156,7 +160,9 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
       {/* Tech tags */}
       <div className="flex flex-wrap gap-2 mt-3">
         {project.tech.slice(0, 4).map((t) => (
-          <span key={t} className="tag">{t}</span>
+          <span key={t} className="tag">
+            {t}
+          </span>
         ))}
       </div>
     </article>

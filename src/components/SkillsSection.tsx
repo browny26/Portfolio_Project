@@ -101,7 +101,7 @@ export default function SkillsSection() {
               {list.map((skill) => (
                 <span
                   key={skill}
-                  className="skill-tag tag hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors cursor-default"
+                  className="skill-tag tag transition-colors cursor-default"
                 >
                   {skill}
                 </span>

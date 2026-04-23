@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { Syne, DM_Mono } from "next/font/google";
-import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import type { Metadata } from "next";
+import { DM_Mono, Syne } from "next/font/google";
+import "./globals.css";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -16,10 +16,29 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Luisa Cerin Ogbeiwi — Web Developer & Designer",
+  title: "Luisa Cerin Ogbeiwi — Software & AI Developer",
   description:
     "Full-stack developer crafting modern websites and sleek interfaces. Blending design and code to deliver unique digital experiences.",
-  keywords: ["web developer", "designer", "full-stack", "React", "Next.js", "TypeScript"],
+  keywords: [
+    "web developer",
+    "designer",
+    "full-stack",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Milan",
+    "freelance",
+    "portfolio",
+    "modern websites",
+    "sleek interfaces",
+    "digital experiences",
+    "Luisa Cerin Ogbeiwi",
+    "Ai Integration",
+    "UI/UX",
+    "responsive design",
+    "frontend",
+    "backend",
+  ],
 };
 
 export default function RootLayout({
