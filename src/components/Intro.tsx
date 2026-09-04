@@ -9,8 +9,15 @@ export default function Intro({ onComplete }: { onComplete: () => void }) {
   const lineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (sessionStorage.getItem("introShown") === "true") {
+      if (introRef.current) introRef.current.style.display = "none";
+      onComplete();
+      return;
+    }
+
     const tl = gsap.timeline({
       onComplete: () => {
+        sessionStorage.setItem("introShown", "true");
         onComplete();
         gsap.to(introRef.current, {
           yPercent: -100,

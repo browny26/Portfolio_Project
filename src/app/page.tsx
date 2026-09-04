@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Intro from "@/components/Intro";
-import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ProjectsBanner from "@/components/ProjectsBanner";
 import ServicesSection from "@/components/ServicesSection";
@@ -16,7 +15,6 @@ export default function Home() {
   return (
     <>
       <Intro onComplete={() => setIntroComplete(true)} />
-      <Header />
       <main className="bg-[#f5f3ef] min-h-screen">
         <Hero />
         <ProjectsBanner />

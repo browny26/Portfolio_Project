@@ -122,18 +122,22 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           className="project-image object-cover"
           sizes="(max-width: 768px) 100vw, 50vw"
         />
-        {/* Hover overlay */}
-        <div
-          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ background: "rgba(26,26,26,0.6)" }}
-        >
-          <span
-            className="label"
-            style={{ color: "#f5f3ef", letterSpacing: "0.15em" }}
+        {/* Hover overlay, links to the case study when there is one */}
+        {project.caseStudy && (
+          <Link
+            href={`/projects/${project.slug}`}
+            aria-label={`${project.title} case study`}
+            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{ background: "rgba(26,26,26,0.6)" }}
           >
-            View project
-          </span>
-        </div>
+            <span
+              className="label"
+              style={{ color: "#f5f3ef", letterSpacing: "0.15em" }}
+            >
+              View case study
+            </span>
+          </Link>
+        )}
       </div>
 
       {/* Meta */}
@@ -148,7 +152,17 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
               marginBottom: "0.25rem",
             }}
           >
-            {project.title}
+            {project.caseStudy ? (
+              <Link
+                href={`/projects/${project.slug}`}
+                className="hover:text-taupe transition-colors"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                {project.title}
+              </Link>
+            ) : (
+              project.title
+            )}
           </h3>
           <p className="label">{project.category}</p>
         </div>

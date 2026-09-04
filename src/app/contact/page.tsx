@@ -1,7 +1,6 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
@@ -62,8 +61,6 @@ export default function ContactPage() {
 
   return (
     <div className="bg-cream min-h-screen">
-      <Header />
-
       <main>
         {/* Heading */}
         <div className="bg-[#1a1a1a] w-full">

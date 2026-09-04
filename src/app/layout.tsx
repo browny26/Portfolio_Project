@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import SmoothScroll from "@/components/SmoothScroll";
 import type { Metadata } from "next";
 import { DM_Mono, Syne } from "next/font/google";
@@ -49,7 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${syne.variable} ${dmMono.variable}`}>
       <body className="antialiased">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <Header />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

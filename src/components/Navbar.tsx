@@ -71,7 +71,7 @@ export default function Navbar() {
         <div className="w-px h-4 bg-white/10" />
 
         {/* Nav links */}
-        <div className="flex items-center gap-1 ml-2">
+        {/* <div className="flex items-center gap-1 ml-2">
           {links.map(({ label, href }) => (
             <Link
               key={href}
@@ -82,7 +82,7 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
-        </div>
+        </div> */}
 
         <div className="w-px h-4 bg-white/10 ml-2" />
 

@@ -1,11 +1,11 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import { projects } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -48,8 +48,6 @@ export default function ProjectsPage() {
 
   return (
     <div className="bg-cream min-h-screen">
-      <Header />
-
       <main>
         {/* Page heading */}
         <div className="bg-[#1a1a1a] w-full">
@@ -100,9 +98,15 @@ export default function ProjectsPage() {
                     className="object-cover aspect-video transition-transform duration-700 group-hover:scale-[1.04]"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[rgba(26,26,26,0.55)]">
-                    <span className="label text-cream">View project</span>
-                  </div>
+                  {project.caseStudy && (
+                    <Link
+                      href={`/projects/${project.slug}`}
+                      aria-label={`${project.title} case study`}
+                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[rgba(26,26,26,0.55)]"
+                    >
+                      <span className="label text-cream">View case study</span>
+                    </Link>
+                  )}
                 </div>
                 <div className="w-full">
                   {/* Info row */}
@@ -145,13 +149,21 @@ export default function ProjectsPage() {
                     ))}
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex flex-wrap gap-3">
+                    {project.caseStudy && (
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        className="btn btn-filled text-[0.7rem] py-1 px-4"
+                      >
+                        Case study →
+                      </Link>
+                    )}
                     {project.links.live && (
                       <a
                         href={project.links.live}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn btn-filled text-[0.7rem] py-1 px-4"
+                        className="btn text-[0.7rem] py-[0.45rem] px-4"
                       >
                         View site ↗
                       </a>

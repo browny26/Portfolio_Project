@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useLenis } from "./SmoothScroll";
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -17,6 +18,10 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeHash, setActiveHash] = useState("");
   const pathname = usePathname();
+  const lenisRef = useLenis();
+  const initialPathname = useRef(pathname);
+  const darkHero =
+    pathname === "/contact" || pathname.startsWith("/projects");
 
   const navLinks = [
     { label: "Projects", href: menuOpen ? "/projects" : "/#projects" },
@@ -27,13 +32,18 @@ export default function Header() {
   ];
 
   useEffect(() => {
+    // if (pathname !== "/") {
+    //   setActiveHash("");
+    //   return;
+    // }
+
     const updateHash = () => setActiveHash(window.location.hash);
 
-    updateHash(); // iniziale
+    updateHash();
     window.addEventListener("hashchange", updateHash);
 
     return () => window.removeEventListener("hashchange", updateHash);
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (pathname !== "/") return;
@@ -68,10 +78,11 @@ export default function Header() {
   }, [pathname]);
 
   useEffect(() => {
+    const delay = initialPathname.current === "/" ? 2.4 : 0.2;
     gsap.fromTo(
       headerRef.current,
       { y: -60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 2.4 },
+      { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay },
     );
   }, []);
 
@@ -83,6 +94,7 @@ export default function Header() {
 
   useEffect(() => {
     if (menuOpen) {
+      lenisRef?.current?.stop();
       gsap.to(overlayRef.current, {
         clipPath: "inset(0 0 0% 0)",
         duration: 0.75,
@@ -100,23 +112,34 @@ export default function Header() {
           delay: 0.3,
         },
       );
-      document.body.style.overflow = "hidden";
     } else {
+      lenisRef?.current?.start();
       gsap.to(overlayRef.current, {
         clipPath: "inset(0 0 100% 0)",
         duration: 0.6,
         ease: "power3.inOut",
       });
-      document.body.style.overflow = "";
     }
-  }, [menuOpen]);
+  }, [menuOpen, lenisRef]);
 
   useEffect(
     () => () => {
-      document.body.style.overflow = "";
+      lenisRef?.current?.start();
     },
-    [],
+    [lenisRef],
   );
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const id = sessionStorage.getItem("pendingHash");
+    if (!id) return;
+    sessionStorage.removeItem("pendingHash");
+    const timer = setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) lenisRef?.current?.scrollTo(el, { offset: -80 });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [pathname, lenisRef]);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -124,24 +147,18 @@ export default function Header() {
   ) => {
     setMenuOpen(false);
 
-    if (href.startsWith("/#") && pathname === "/") {
-      e.preventDefault();
-
-      const id = href.replace("/#", "");
-      const el = document.getElementById(id);
-
-      if (!el) return;
-
-      setTimeout(() => {
-        gsap.to(window, {
-          duration: 1.2,
-          scrollTo: {
-            y: el,
-            offsetY: 80,
-          },
-          ease: "power3.inOut",
-        });
-      }, 400);
+    if (href.startsWith("/#")) {
+      if (pathname === "/") {
+        e.preventDefault();
+        const id = href.replace("/#", "");
+        const el = document.getElementById(id);
+        if (!el) return;
+        setTimeout(() => {
+          lenisRef?.current?.scrollTo(el, { offset: -80 });
+        }, 400);
+      } else {
+        sessionStorage.setItem("pendingHash", href.replace("/#", ""));
+      }
     }
   };
 
@@ -203,21 +220,20 @@ export default function Header() {
         </Link>
 
         {/* Center nav — desktop only */}
-        <nav className="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+        {/* <nav className="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
           {navLinks.map(({ label, href }) => (
             <Link
               key={href}
               href={href}
               onClick={(e) => handleNavClick(e, href)}
-              className={`relative group inline-block ${isActive(href) ? ((pathname === "/contact" || pathname === "/projects") && !scrolled ? "text-cream" : "text-[#1a1a1a]") : "text-taupe"} hover:text-[#1a1a1a] transition-colors duration-200`}
+              className={`relative group inline-block ${isActive(href) ? (darkHero && !scrolled ? "text-cream" : "text-[#1a1a1a]") : "text-taupe"} hover:text-[#1a1a1a] transition-colors duration-200`}
               style={{ textDecoration: "none" }}
             >
               <span className="label" style={{ color: "inherit" }}>
                 {label}
               </span>
-              {/* Underline reveal */}
               <span
-                className={`absolute left-0 h-px ${(pathname === "/contact" || pathname === "/projects") && !scrolled ? "bg-cream" : "bg-[#1a1a1a]"} transition-all duration-300 ease-out group-hover:w-full`}
+                className={`absolute left-0 h-px ${darkHero && !scrolled ? "bg-cream" : "bg-[#1a1a1a]"} transition-all duration-300 ease-out group-hover:w-full`}
                 style={{
                   bottom: "-3px",
                   width: isActive(href) ? "100%" : "0%",
@@ -225,7 +241,7 @@ export default function Header() {
               />
             </Link>
           ))}
-        </nav>
+        </nav> */}
 
         {/* Right side */}
         <div className="flex items-center gap-4 z-50 relative">
@@ -257,7 +273,7 @@ export default function Header() {
                 height: "1px",
                 background:
                   menuOpen ||
-                  ((pathname === "/contact" || pathname === "/projects") &&
+                  (darkHero &&
                     !scrolled)
                     ? "#f5f3ef"
                     : "#1a1a1a",
@@ -274,7 +290,7 @@ export default function Header() {
                 height: "1px",
                 background:
                   menuOpen ||
-                  ((pathname === "/contact" || pathname === "/projects") &&
+                  (darkHero &&
                     !scrolled)
                     ? "#f5f3ef"
                     : "#1a1a1a",
@@ -290,7 +306,7 @@ export default function Header() {
                 height: "1px",
                 background:
                   menuOpen ||
-                  ((pathname === "/contact" || pathname === "/projects") &&
+                  (darkHero &&
                     !scrolled)
                     ? "#f5f3ef"
                     : "#1a1a1a",

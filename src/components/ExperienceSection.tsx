@@ -118,7 +118,8 @@ export default function ExperienceSection() {
                     {exp.role}
                   </h3>
                   <p className="label mb-3 text-[#1a1a1a]">
-                    {exp.company} — {exp.location}
+                    {exp.company}
+                    {exp.location ? ` — ${exp.location}` : ""}
                   </p>
                 </div>
                 <ul className="flex flex-col gap-1">
