@@ -106,7 +106,6 @@ export default function Footer() {
                 label: "LinkedIn",
                 href: "https://linkedin.com/in/luisa-cerin",
               },
-              { label: "Instagram", href: "https://instagram.com/lui_cerin" },
             ].map(({ label, href }) => (
               <a
                 key={label}

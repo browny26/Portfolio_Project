@@ -1,6 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
+import { cvUrl } from "@/lib/data";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
@@ -141,11 +142,7 @@ export default function ContactPage() {
                       href: "https://linkedin.com/in/luisa-cerin",
                       handle: "luisa-cerin",
                     },
-                    {
-                      label: "Instagram",
-                      href: "https://instagram.com/lui_cerin",
-                      handle: "@lui_cerin",
-                    },
+                    { label: "CV", href: cvUrl, handle: "PDF" },
                   ].map(({ label, href, handle }) => (
                     <a
                       key={label}

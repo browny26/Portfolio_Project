@@ -1,3 +1,6 @@
+/** Public path of the CV, opened in a new tab wherever it is linked. */
+export const cvUrl = "/cv/LuisaCerinOgbeiwi_cv_en.pdf";
+
 export type CaseStudyImage = {
   src: string;
   alt: string;

@@ -167,10 +167,15 @@ body {
 .btn-filled-inverted {
   background: #f5f3ef;
   color: #1a1a1a;
+  border-color: #f5f3ef;
 }
 .btn-filled:hover {
   background: transparent;
   color: #1a1a1a;
+}
+.btn-filled-inverted:hover {
+  background: transparent;
+  color: #f5f3ef;
 }
 
 /* ─── Section spacing ─── */

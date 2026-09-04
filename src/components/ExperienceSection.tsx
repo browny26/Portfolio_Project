@@ -1,6 +1,6 @@
 "use client";
 
-import { experience } from "@/lib/data";
+import { cvUrl, experience } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
@@ -84,10 +84,23 @@ export default function ExperienceSection() {
               { label: "University", value: "Univ. degli Studi di Milano" },
               { label: "Languages", value: "Italian · English (B2)" },
               { label: "Status", value: "Open to work" },
-            ].map(({ label, value }) => (
+              { label: "CV", value: "Open PDF ↗", href: cvUrl },
+            ].map(({ label, value, href }) => (
               <div key={label}>
                 <p className="label mb-1">{label}</p>
-                <p className="text-sm font-medium text-[#1a1a1a]">{value}</p>
+                {href ? (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-[#1a1a1a] hover:text-taupe transition-colors"
+                    style={{ textDecoration: "none" }}
+                  >
+                    {value}
+                  </a>
+                ) : (
+                  <p className="text-sm font-medium text-[#1a1a1a]">{value}</p>
+                )}
               </div>
             ))}
           </div>

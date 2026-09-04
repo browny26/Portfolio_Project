@@ -6,9 +6,52 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { cvUrl } from "@/lib/data";
 import { useLenis } from "./SmoothScroll";
 
 gsap.registerPlugin(ScrollToPlugin);
+
+const navLinks = [
+  { label: "Projects", href: "/projects" },
+  { label: "Services", href: "/#services" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Experience", href: "/#experience" },
+  { label: "Contact", href: "/contact" },
+];
+
+const menuInfo: {
+  label: string;
+  value: string;
+  href?: string;
+  external?: boolean;
+}[] = [
+  { label: "Status", value: "Available for projects" },
+  {
+    label: "Email",
+    value: "luisa.cerinogbeiwi@gmail.com",
+    href: "mailto:luisa.cerinogbeiwi@gmail.com",
+  },
+  {
+    label: "Linkedin",
+    value: "luisa-cerin",
+    href: "https://linkedin.com/in/luisa-cerin",
+    external: true,
+  },
+  { label: "CV", value: "Open PDF ↗", href: cvUrl, external: true },
+  { label: "Location", value: "Milan, Italy" },
+];
+
+// The glass layer that appears once the page is scrolled. Blur is never
+// transitioned (it steps visibly); the whole layer fades in with opacity.
+const glass = {
+  background: "rgba(245,243,239,0.55)",
+  backdropFilter: "blur(14px) saturate(140%)",
+  WebkitBackdropFilter: "blur(14px) saturate(140%)",
+  border: "1px solid rgba(26,26,26,0.08)",
+  borderRadius: "4px",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,0.55), 0 12px 32px -16px rgba(26,26,26,0.28)",
+};
 
 export default function Header() {
   const headerRef = useRef<HTMLElement>(null);
@@ -16,66 +59,16 @@ export default function Header() {
   const menuLinksRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeHash, setActiveHash] = useState("");
   const pathname = usePathname();
   const lenisRef = useLenis();
   const initialPathname = useRef(pathname);
+
+  // Pages whose hero is dark: the bar sits on #1a1a1a until the glass appears.
   const darkHero =
     pathname === "/contact" || pathname.startsWith("/projects");
-
-  const navLinks = [
-    { label: "Projects", href: menuOpen ? "/projects" : "/#projects" },
-    { label: "Services", href: "/#services" },
-    { label: "Skills", href: "/#skills" },
-    { label: "Experience", href: "/#experience" },
-    { label: "Contact", href: "/contact" },
-  ];
-
-  useEffect(() => {
-    // if (pathname !== "/") {
-    //   setActiveHash("");
-    //   return;
-    // }
-
-    const updateHash = () => setActiveHash(window.location.hash);
-
-    updateHash();
-    window.addEventListener("hashchange", updateHash);
-
-    return () => window.removeEventListener("hashchange", updateHash);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (pathname !== "/") return;
-
-    const sections = navLinks
-      .filter((l) => l.href.startsWith("/#"))
-      .map((l) => document.getElementById(l.href.replace("/#", "")))
-      .filter(Boolean);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            setActiveHash(`#${id}`);
-
-            // aggiorna anche URL senza jump
-            window.history.replaceState(null, "", `#${id}`);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "-40% 0px -40% 0px",
-        threshold: 0,
-      },
-    );
-
-    sections.forEach((section) => observer.observe(section!));
-
-    return () => observer.disconnect();
-  }, [pathname]);
+  const onDark = menuOpen || (darkHero && !scrolled);
+  const chrome = onDark ? "#f5f3ef" : "#1a1a1a";
+  const glassVisible = scrolled && !menuOpen;
 
   useEffect(() => {
     const delay = initialPathname.current === "/" ? 2.4 : 0.2;
@@ -88,6 +81,7 @@ export default function Header() {
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
+    fn();
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
@@ -129,6 +123,16 @@ export default function Header() {
     [lenisRef],
   );
 
+  // Escape closes the menu.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   useEffect(() => {
     if (pathname !== "/") return;
     const id = sessionStorage.getItem("pendingHash");
@@ -162,49 +166,58 @@ export default function Header() {
     }
   };
 
-  const isActive = (href: string) => {
-    if (href === "/contact") return pathname === "/contact";
-
-    if (href.startsWith("/#")) {
-      return activeHash === href.replace("/", "");
-    }
-
-    return false;
-  };
+  const burgerLine = (width: string, extra: React.CSSProperties) => (
+    <span
+      style={{
+        display: "block",
+        width,
+        height: "1px",
+        background: chrome,
+        transformOrigin: "center",
+        transition:
+          "transform 0.35s ease, opacity 0.2s ease, background 0.4s, width 0.25s ease",
+        ...extra,
+      }}
+    />
+  );
 
   return (
     <>
-      {/* Header bar */}
+      {/* Header bar: centred with auto margins, inset from the edges once scrolled.
+          The margin is inline because the global `* { margin: 0 }` reset in
+          globals.css sits outside Tailwind's layers and overrides `mx-auto`. */}
       <header
         ref={headerRef}
-        className="fixed left-1/2 z-50 flex items-center justify-between w-full max-w-7xl"
+        className="fixed left-0 right-0 z-50 flex w-full max-w-7xl items-center justify-between"
         style={{
-          transform: "translateX(-50%)",
           opacity: 0,
+          marginInline: "auto",
           padding: "1.1rem 2rem",
-          transition:
-            "background 0.45s ease, border-color 0.45s ease, backdrop-filter 0.45s ease, top 0.45s ease, border-radius 0.45s ease",
-          background:
-            scrolled && !menuOpen ? "rgba(255,255,255,0.70)" : "transparent",
-          backdropFilter: scrolled ? "blur(18px)" : "none",
-          WebkitBackdropFilter: scrolled ? "blur(18px)" : "none",
           top: scrolled ? "1.5rem" : "0",
-          borderRadius: scrolled ? "4px" : "0",
-          border:
-            scrolled && !menuOpen
-              ? "1px solid #ececec"
-              : "1px solid transparent",
+          width: scrolled ? "calc(100% - 2rem)" : "100%",
+          transition: "top 0.45s ease, width 0.45s ease",
         }}
       >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            ...glass,
+            opacity: glassVisible ? 1 : 0,
+            transition: "opacity 0.45s ease",
+          }}
+        />
+
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-3 z-50 relative"
+          className="relative z-50 flex items-center gap-3"
           style={{ textDecoration: "none" }}
         >
           <Image
             src="/imgs/noun-y2k-spark-6764461.png"
-            alt="Background pattern"
+            alt=""
+            aria-hidden
             width={32}
             height={32}
           />
@@ -219,112 +232,59 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Center nav — desktop only */}
-        {/* <nav className="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
-          {navLinks.map(({ label, href }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={(e) => handleNavClick(e, href)}
-              className={`relative group inline-block ${isActive(href) ? (darkHero && !scrolled ? "text-cream" : "text-[#1a1a1a]") : "text-taupe"} hover:text-[#1a1a1a] transition-colors duration-200`}
-              style={{ textDecoration: "none" }}
-            >
-              <span className="label" style={{ color: "inherit" }}>
-                {label}
-              </span>
-              <span
-                className={`absolute left-0 h-px ${darkHero && !scrolled ? "bg-cream" : "bg-[#1a1a1a]"} transition-all duration-300 ease-out group-hover:w-full`}
-                style={{
-                  bottom: "-3px",
-                  width: isActive(href) ? "100%" : "0%",
-                }}
-              />
-            </Link>
-          ))}
-        </nav> */}
-
         {/* Right side */}
-        <div className="flex items-center gap-4 z-50 relative">
-          {/* Contact button — desktop */}
+        <div className="relative z-50 flex items-center gap-5">
+          {/* Contact button, desktop only. Inverted on dark heroes. */}
           <Link
             href="/contact"
-            className="hidden md:inline-flex btn btn-filled"
+            className={`btn hidden md:inline-flex ${darkHero && !scrolled ? "btn-filled-inverted" : "btn-filled"}`}
             style={{
               fontSize: "0.72rem",
               padding: "0.55rem 1.1rem",
               opacity: menuOpen ? 0 : 1,
-              transition: "opacity 0.3s",
+              transition:
+                "opacity 0.3s, background 0.25s, color 0.25s, border-color 0.25s",
               pointerEvents: menuOpen ? "none" : "auto",
             }}
           >
             Get in touch
           </Link>
 
-          {/* Burger — all screens */}
+          {/* Burger with its label, all screens */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="z-50 flex flex-col justify-center items-end gap-1.25 w-8 h-8"
+            className="z-50 flex items-center gap-3"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="site-menu"
           >
             <span
-              style={{
-                display: "block",
-                width: "1.4rem",
-                height: "1px",
-                background:
-                  menuOpen ||
-                  (darkHero &&
-                    !scrolled)
-                    ? "#f5f3ef"
-                    : "#1a1a1a",
-                transition:
-                  "transform 0.35s ease, background 0.4s, width 0.25s ease",
-                transformOrigin: "center",
+              className="label"
+              style={{ color: chrome, transition: "color 0.4s" }}
+            >
+              {menuOpen ? "Close" : "Menu"}
+            </span>
+            <span className="flex h-8 w-8 flex-col items-end justify-center gap-1.25">
+              {burgerLine("1.4rem", {
                 transform: menuOpen ? "translateY(6px) rotate(45deg)" : "none",
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "0.9rem",
-                height: "1px",
-                background:
-                  menuOpen ||
-                  (darkHero &&
-                    !scrolled)
-                    ? "#f5f3ef"
-                    : "#1a1a1a",
-                transition:
-                  "opacity 0.2s ease, background 0.4s, width 0.25s ease",
-                opacity: menuOpen ? 0 : 1,
-              }}
-            />
-            <span
-              style={{
-                display: "block",
-                width: "1.4rem",
-                height: "1px",
-                background:
-                  menuOpen ||
-                  (darkHero &&
-                    !scrolled)
-                    ? "#f5f3ef"
-                    : "#1a1a1a",
-                transition:
-                  "transform 0.35s ease, background 0.4s, width 0.25s ease",
-                transformOrigin: "center",
+              })}
+              {burgerLine("0.9rem", { opacity: menuOpen ? 0 : 1 })}
+              {burgerLine("1.4rem", {
                 transform: menuOpen
                   ? "translateY(-6px) rotate(-45deg)"
                   : "none",
-              }}
-            />
+              })}
+            </span>
           </button>
         </div>
       </header>
 
-      {/* Full-screen overlay */}
+      {/* Full-screen overlay. Inert while closed so hidden links are not focusable. */}
       <div
         ref={overlayRef}
+        id="site-menu"
+        aria-hidden={!menuOpen}
+        inert={!menuOpen}
         className="fixed inset-0 z-40 flex flex-col"
         style={{
           background: "#1a1a1a",
@@ -390,24 +350,7 @@ export default function Header() {
           }}
           className="md:justify-between"
         >
-          {[
-            {
-              label: "Status",
-              value: "Available for projects",
-              href: undefined,
-            },
-            {
-              label: "Email",
-              value: "luisa.cerinogbeiwi@gmail.com",
-              href: "mailto:luisa.cerinogbeiwi@gmail.com",
-            },
-            {
-              label: "Linkedin",
-              value: "luisa-cerin",
-              href: "https://linkedin.com/in/luisa-cerin",
-            },
-            { label: "Location", value: "Milan, Italy", href: undefined },
-          ].map(({ label, value, href }) => (
+          {menuInfo.map(({ label, value, href, external }) => (
             <div
               key={label}
               style={{
@@ -425,6 +368,8 @@ export default function Header() {
               {href ? (
                 <a
                   href={href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
                   style={{
                     fontSize: "0.85rem",
                     color: "rgba(245,243,239,0.65)",
