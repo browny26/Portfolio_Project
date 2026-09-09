@@ -6,40 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { cvUrl } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
+import LanguageSwitcher from "./LanguageSwitcher";
 import { useLenis } from "./SmoothScroll";
 
 gsap.registerPlugin(ScrollToPlugin);
-
-const navLinks = [
-  { label: "Projects", href: "/projects" },
-  { label: "Services", href: "/#services" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Experience", href: "/#experience" },
-  { label: "Contact", href: "/contact" },
-];
-
-const menuInfo: {
-  label: string;
-  value: string;
-  href?: string;
-  external?: boolean;
-}[] = [
-  { label: "Status", value: "Available for projects" },
-  {
-    label: "Email",
-    value: "luisa.cerinogbeiwi@gmail.com",
-    href: "mailto:luisa.cerinogbeiwi@gmail.com",
-  },
-  {
-    label: "Linkedin",
-    value: "luisa-cerin",
-    href: "https://linkedin.com/in/luisa-cerin",
-    external: true,
-  },
-  { label: "CV", value: "Open PDF ↗", href: cvUrl, external: true },
-  { label: "Location", value: "Milan, Italy" },
-];
 
 // The glass layer that appears once the page is scrolled. Blur is never
 // transitioned (it steps visibly); the whole layer fades in with opacity.
@@ -53,7 +24,13 @@ const glass = {
     "inset 0 1px 0 rgba(255,255,255,0.55), 0 12px 32px -16px rgba(26,26,26,0.28)",
 };
 
+/** The path with its locale prefix removed: "/it/projects" -> "/projects". */
+function routeOf(pathname: string) {
+  return pathname.replace(/^\/[^/]+/, "") || "/";
+}
+
 export default function Header() {
+  const { t, href } = useI18n();
   const headerRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const menuLinksRef = useRef<HTMLDivElement>(null);
@@ -61,17 +38,59 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const lenisRef = useLenis();
-  const initialPathname = useRef(pathname);
+  const route = routeOf(pathname);
+  const isHome = route === "/";
+  const initialIsHome = useRef(isHome);
+
+  // Sections live on the home page; `hash` links scroll instead of navigating.
+  const navLinks = [
+    { label: t.nav.projects, path: "/projects" },
+    { label: t.nav.services, hash: "services" },
+    { label: t.nav.skills, hash: "skills" },
+    { label: t.nav.experience, hash: "experience" },
+    { label: t.nav.contact, path: "/contact" },
+  ];
+
+  const menuInfo: {
+    label: string;
+    value: string;
+    href?: string;
+    external?: boolean;
+  }[] = [
+    { label: t.header.info.status, value: t.header.info.statusValue },
+    {
+      label: t.header.info.email,
+      value: "luisa.cerinogbeiwi@gmail.com",
+      href: "mailto:luisa.cerinogbeiwi@gmail.com",
+    },
+    {
+      label: t.header.info.linkedin,
+      value: "luisa-cerin",
+      href: "https://linkedin.com/in/luisa-cerin",
+      external: true,
+    },
+    {
+      label: t.header.info.cv,
+      value: t.header.info.cvValue,
+      href: t.cvUrl,
+      external: true,
+    },
+    { label: t.header.info.location, value: t.header.info.locationValue },
+  ];
 
   // Pages whose hero is dark: the bar sits on #1a1a1a until the glass appears.
+  // Matched exactly, so a 404 under /projects (which has a light hero) does not
+  // paint the bar cream on cream.
   const darkHero =
-    pathname === "/contact" || pathname.startsWith("/projects");
+    route === "/contact" ||
+    route === "/projects" ||
+    t.projects.some((p) => p.caseStudy && route === `/projects/${p.slug}`);
   const onDark = menuOpen || (darkHero && !scrolled);
   const chrome = onDark ? "#f5f3ef" : "#1a1a1a";
   const glassVisible = scrolled && !menuOpen;
 
   useEffect(() => {
-    const delay = initialPathname.current === "/" ? 2.4 : 0.2;
+    const delay = initialIsHome.current ? 2.4 : 0.2;
     gsap.fromTo(
       headerRef.current,
       { y: -60, opacity: 0 },
@@ -134,7 +153,7 @@ export default function Header() {
   }, [menuOpen]);
 
   useEffect(() => {
-    if (pathname !== "/") return;
+    if (!isHome) return;
     const id = sessionStorage.getItem("pendingHash");
     if (!id) return;
     sessionStorage.removeItem("pendingHash");
@@ -143,26 +162,25 @@ export default function Header() {
       if (el) lenisRef?.current?.scrollTo(el, { offset: -80 });
     }, 500);
     return () => clearTimeout(timer);
-  }, [pathname, lenisRef]);
+  }, [isHome, lenisRef]);
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string,
+    hash?: string,
   ) => {
     setMenuOpen(false);
+    if (!hash) return;
 
-    if (href.startsWith("/#")) {
-      if (pathname === "/") {
-        e.preventDefault();
-        const id = href.replace("/#", "");
-        const el = document.getElementById(id);
-        if (!el) return;
-        setTimeout(() => {
-          lenisRef?.current?.scrollTo(el, { offset: -80 });
-        }, 400);
-      } else {
-        sessionStorage.setItem("pendingHash", href.replace("/#", ""));
-      }
+    if (isHome) {
+      e.preventDefault();
+      const el = document.getElementById(hash);
+      if (!el) return;
+      setTimeout(() => {
+        lenisRef?.current?.scrollTo(el, { offset: -80 });
+      }, 400);
+    } else {
+      // Scrolled to after the home page mounts.
+      sessionStorage.setItem("pendingHash", hash);
     }
   };
 
@@ -210,23 +228,25 @@ export default function Header() {
 
         {/* Logo */}
         <Link
-          href="/"
+          href={href("/")}
           className="relative z-50 flex items-center gap-3"
           style={{ textDecoration: "none" }}
         >
+          {/* Solid black artwork, so inverting it turns the mark cream on dark heroes. */}
           <Image
             src="/imgs/noun-y2k-spark-6764461.png"
             alt=""
             aria-hidden
             width={32}
             height={32}
+            style={{
+              filter: onDark ? "invert(1)" : "none",
+              transition: "filter 0.4s",
+            }}
           />
           <span
             className="label"
-            style={{
-              color: menuOpen ? "rgba(245,243,239,0.45)" : "#8c8680",
-              transition: "color 0.4s",
-            }}
+            style={{ color: chrome, transition: "color 0.4s" }}
           >
             LCO Studio
           </span>
@@ -234,9 +254,14 @@ export default function Header() {
 
         {/* Right side */}
         <div className="relative z-50 flex items-center gap-5">
+          <LanguageSwitcher
+            color={chrome}
+            dim={onDark ? "rgba(245,243,239,0.4)" : "#8c8680"}
+          />
+
           {/* Contact button, desktop only. Inverted on dark heroes. */}
           <Link
-            href="/contact"
+            href={href("/contact")}
             className={`btn hidden md:inline-flex ${darkHero && !scrolled ? "btn-filled-inverted" : "btn-filled"}`}
             style={{
               fontSize: "0.72rem",
@@ -247,14 +272,14 @@ export default function Header() {
               pointerEvents: menuOpen ? "none" : "auto",
             }}
           >
-            Get in touch
+            {t.header.getInTouch}
           </Link>
 
           {/* Burger with its label, all screens */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="z-50 flex items-center gap-3"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-label={menuOpen ? t.header.closeMenu : t.header.openMenu}
             aria-expanded={menuOpen}
             aria-controls="site-menu"
           >
@@ -262,7 +287,7 @@ export default function Header() {
               className="label"
               style={{ color: chrome, transition: "color 0.4s" }}
             >
-              {menuOpen ? "Close" : "Menu"}
+              {menuOpen ? t.header.close : t.header.menu}
             </span>
             <span className="flex h-8 w-8 flex-col items-end justify-center gap-1.25">
               {burgerLine("1.4rem", {
@@ -303,9 +328,9 @@ export default function Header() {
             paddingBottom: "2rem",
           }}
         >
-          {navLinks.map(({ label, href }, i) => (
+          {navLinks.map(({ label, path, hash }, i) => (
             <div
-              key={href}
+              key={label}
               className="menu-item flex items-baseline gap-5"
               style={{
                 opacity: 0,
@@ -320,8 +345,8 @@ export default function Header() {
                 0{i + 1}
               </span>
               <Link
-                href={href}
-                onClick={(e) => handleNavClick(e, href)}
+                href={hash ? `${href("/")}#${hash}` : href(path!)}
+                onClick={(e) => handleNavClick(e, hash)}
                 className="hover:text-taupe transition-colors duration-200"
                 style={{
                   fontSize: "clamp(2.2rem, 6.5vw, 5rem)",
@@ -350,7 +375,7 @@ export default function Header() {
           }}
           className="md:justify-between"
         >
-          {menuInfo.map(({ label, value, href, external }) => (
+          {menuInfo.map(({ label, value, href: link, external }) => (
             <div
               key={label}
               style={{
@@ -365,9 +390,9 @@ export default function Header() {
               >
                 {label}
               </span>
-              {href ? (
+              {link ? (
                 <a
-                  href={href}
+                  href={link}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
                   style={{

@@ -1,13 +1,14 @@
 "use client";
 
-import { skills } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function SkillsSection() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -72,19 +73,19 @@ export default function SkillsSection() {
       }}
     >
       <div className="mb-12 md:mb-16">
-        <span className="label block mb-4">Tech stack</span>
+        <span className="label block mb-4">{t.skills.label}</span>
         <div className="overflow-clip">
           <h2
             className="reveal-line block font-bold tracking-[-0.03em] text-[#1a1a1a]"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
           >
-            Skills
+            {t.skills.title}
           </h2>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-        {Object.entries(skills).map(([category, list]) => (
+        {Object.entries(t.skills.groups).map(([category, list]) => (
           <div key={category} className="skill-col opacity-0">
             <h3
               className="label text-[#1a1a1a]"

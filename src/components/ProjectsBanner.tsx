@@ -4,10 +4,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ProjectsBanner() {
+  const { t, href } = useI18n();
   const bannerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
@@ -48,7 +50,7 @@ export default function ProjectsBanner() {
         }}
       >
         <Link
-          href="/projects"
+          href={href("/projects")}
           onMouseEnter={handleEnter}
           onMouseLeave={handleLeave}
           className="block no-underline"
@@ -56,7 +58,7 @@ export default function ProjectsBanner() {
           <div className="section flex items-center justify-between gap-8 cursor-pointer">
             {/* Left */}
             <div>
-              <span className="label block mb-3">Selected work</span>
+              <span className="label block mb-3">{t.projectsBanner.label}</span>
               <div
                 ref={textRef}
                 className="flex items-baseline gap-6 flex-wrap"
@@ -65,13 +67,13 @@ export default function ProjectsBanner() {
                   style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
                   className="font-bold tracking-[-0.03em] leading-none text-cream"
                 >
-                  Projects
+                  {t.projectsBanner.title}
                 </span>
                 <span
                   style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
                   className="font-bold tracking-[-0.03em] leading-none text-taupe italic"
                 >
-                  &amp; work
+                  {t.projectsBanner.titleItalic}
                 </span>
               </div>
             </div>

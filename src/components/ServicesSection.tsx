@@ -1,13 +1,14 @@
 "use client";
 
-import { services } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ServicesSection() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -57,20 +58,20 @@ export default function ServicesSection() {
     >
       <div className="flex items-end justify-between mb-12 md:mb-16">
         <div>
-          <span className="label block mb-4">What I do</span>
+          <span className="label block mb-4">{t.services.label}</span>
           <div className="overflow-clip">
             <h2
               className="reveal-line block font-bold tracking-[-0.03em] text-[#1a1a1a]"
               style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
             >
-              Services
+              {t.services.title}
             </h2>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col">
-        {services.map((service, i) => (
+        {t.services.items.map((service, i) => (
           <div
             key={i}
             className="service-item flex flex-col md:flex-row gap-6 md:gap-16"
@@ -102,9 +103,9 @@ export default function ServicesSection() {
               </p>
             </div>
             <div className="md:w-52 shrink-0 flex flex-wrap gap-2 content-start">
-              {service.tech.map((t) => (
-                <span key={t} className="tag">
-                  {t}
+              {service.tech.map((tech) => (
+                <span key={tech} className="tag">
+                  {tech}
                 </span>
               ))}
             </div>

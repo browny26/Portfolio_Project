@@ -1,6 +1,7 @@
 "use client";
 
-import { projects } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
+import type { Project } from "@/i18n/types";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -10,6 +11,8 @@ import { useEffect, useRef } from "react";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ProjectsSection() {
+  const { t, href } = useI18n();
+  const projects = t.projects;
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -80,7 +83,7 @@ export default function ProjectsSection() {
           </div>
         </div>
         <Link
-          href="/projects"
+          href={href("/projects")}
           className="btn hidden md:inline-flex"
           style={{ fontSize: "0.75rem", padding: "0.6rem 1.2rem" }}
         >
@@ -96,15 +99,16 @@ export default function ProjectsSection() {
       </div>
 
       <div className="mt-10 flex justify-center md:hidden">
-        <Link href="/projects" className="btn">
-          View all projects
+        <Link href={href("/projects")} className="btn">
+          {t.projectsPage.label}
         </Link>
       </div>
     </section>
   );
 }
 
-function ProjectCard({ project }: { project: (typeof projects)[0] }) {
+function ProjectCard({ project }: { project: Project }) {
+  const { href } = useI18n();
   return (
     <article className="project-item group" style={{ opacity: 0 }}>
       {/* Image */}
@@ -125,7 +129,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
         {/* Hover overlay, links to the case study when there is one */}
         {project.caseStudy && (
           <Link
-            href={`/projects/${project.slug}`}
+            href={href(`/projects/${project.slug}`)}
             aria-label={`${project.title} case study`}
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
             style={{ background: "rgba(26,26,26,0.6)" }}
@@ -154,7 +158,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           >
             {project.caseStudy ? (
               <Link
-                href={`/projects/${project.slug}`}
+                href={href(`/projects/${project.slug}`)}
                 className="hover:text-taupe transition-colors"
                 style={{ textDecoration: "none", color: "inherit" }}
               >
@@ -173,9 +177,9 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
 
       {/* Tech tags */}
       <div className="flex flex-wrap gap-2 mt-3">
-        {project.tech.slice(0, 4).map((t) => (
-          <span key={t} className="tag">
-            {t}
+        {project.tech.slice(0, 4).map((tech) => (
+          <span key={tech} className="tag">
+            {tech}
           </span>
         ))}
       </div>

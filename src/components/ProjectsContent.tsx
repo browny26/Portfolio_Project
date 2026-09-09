@@ -1,7 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import { projects } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -10,7 +10,9 @@ import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function ProjectsPage() {
+export default function ProjectsContent() {
+  const { t, href } = useI18n();
+  const projects = t.projects;
   const headingRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -60,19 +62,19 @@ export default function ProjectsPage() {
             }}
           >
             <div className="h-16" />
-            <span className="label block mb-4">All projects</span>
+            <span className="label block mb-4">{t.projectsPage.label}</span>
             <div className="overflow-clip">
               <h1
                 className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
                 style={{ fontSize: "clamp(3rem, 8vw, 8rem)" }}
               >
-                My <span className="text-taupe">Work</span>
+                {t.projectsPage.title}{" "}
+                <span className="text-taupe">{t.projectsPage.titleAccent}</span>
               </h1>
             </div>
             <div className="overflow-clip">
               <p className="reveal-line block mt-8 text-[0.9rem] leading-[1.7] text-taupe max-w-xl">
-                A selection of projects spanning web development, UI/UX design
-                and mobile applications.
+                {t.projectsPage.intro}
               </p>
             </div>
           </div>
@@ -98,15 +100,6 @@ export default function ProjectsPage() {
                     className="object-cover aspect-video transition-transform duration-700 group-hover:scale-[1.04]"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
-                  {project.caseStudy && (
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      aria-label={`${project.title} case study`}
-                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[rgba(26,26,26,0.55)]"
-                    >
-                      <span className="label text-cream">View case study</span>
-                    </Link>
-                  )}
                 </div>
                 <div className="w-full">
                   {/* Info row */}
@@ -142,9 +135,9 @@ export default function ProjectsPage() {
                     className="flex flex-wrap items-center gap-2 mb-4"
                     style={{ paddingBlock: "1rem" }}
                   >
-                    {project.tech.slice(0, 4).map((t) => (
-                      <span key={t} className="tag">
-                        {t}
+                    {project.tech.slice(0, 4).map((tech) => (
+                      <span key={tech} className="tag">
+                        {tech}
                       </span>
                     ))}
                   </div>
@@ -152,10 +145,10 @@ export default function ProjectsPage() {
                   <div className="flex flex-wrap gap-3">
                     {project.caseStudy && (
                       <Link
-                        href={`/projects/${project.slug}`}
+                        href={href(`/projects/${project.slug}`)}
                         className="btn btn-filled text-[0.7rem] py-1 px-4"
                       >
-                        Case study →
+                        {t.projectsPage.caseStudy}
                       </Link>
                     )}
                     {project.links.live && (
@@ -165,7 +158,7 @@ export default function ProjectsPage() {
                         rel="noopener noreferrer"
                         className="btn text-[0.7rem] py-[0.45rem] px-4"
                       >
-                        View site ↗
+                        {t.projectsPage.viewSite}
                       </a>
                     )}
                     {project.links.repo && (
@@ -175,7 +168,7 @@ export default function ProjectsPage() {
                         rel="noopener noreferrer"
                         className="btn text-[0.7rem] py-[0.45rem] px-4"
                       >
-                        GitHub →
+                        {t.projectsPage.github}
                       </a>
                     )}
                   </div>

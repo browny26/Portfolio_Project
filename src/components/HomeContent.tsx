@@ -9,7 +9,7 @@ import SkillsSection from "@/components/SkillsSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import Footer from "@/components/Footer";
 
-export default function Home() {
+export default function HomeContent() {
   const [introComplete, setIntroComplete] = useState(false);
 
   return (

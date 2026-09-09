@@ -3,8 +3,10 @@
 import gsap from "gsap";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 export default function Hero() {
+  const { t } = useI18n();
   const sectionRef = useRef<HTMLElement>(null);
   const line1Ref = useRef<HTMLDivElement>(null);
   const line2Ref = useRef<HTMLDivElement>(null);
@@ -45,13 +47,13 @@ export default function Hero() {
         {[
           {
             ref: line1Ref,
-            text: "Software & AI",
+            text: t.hero.line1,
             textClass: "text-[#1a1a1a]",
             italic: false,
           },
           {
             ref: line2Ref,
-            text: "Developer",
+            text: t.hero.line2,
             textClass: "text-[#8c8680]",
             italic: true,
           },
@@ -76,6 +78,7 @@ export default function Hero() {
         alt="Background pattern"
         width={300}
         height={300}
+        loading="eager"
         className="pointer-events-none select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20"
       />
 
@@ -98,8 +101,8 @@ export default function Hero() {
           className="pt-6 w-full pb-10 mt-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
         >
           <div className="flex flex-col gap-[0.35rem]">
-            <span className="label">Based in Milan, Italy</span>
-            <span className="label">Available for freelance</span>
+            <span className="label">{t.hero.based}</span>
+            <span className="label">{t.hero.availability}</span>
           </div>
 
           {/* <div className="flex flex-col items-center gap-2">
@@ -108,8 +111,7 @@ export default function Hero() {
         </div> */}
 
           <p className="max-w-md text-sm leading-[1.7] text-taupe">
-            I craft modern websites and sleek interfaces — blending design and
-            code to deliver unique digital experiences.
+            {t.hero.blurb}
           </p>
         </div>
       </div>

@@ -4,10 +4,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Footer() {
+  const { t, href } = useI18n();
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Footer() {
               className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
               style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
             >
-              Have a project
+              {t.footer.line1}
             </div>
           </div>
           <div className="overflow-clip">
@@ -65,7 +67,7 @@ export default function Footer() {
               className="reveal-line block italic font-bold tracking-[-0.03em] leading-[0.95] text-taupe"
               style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
             >
-              in mind?
+              {t.footer.line2}
             </div>
           </div>
           <div
@@ -74,10 +76,10 @@ export default function Footer() {
           >
             <div className="reveal-line block">
               <Link
-                href="/contact"
+                href={href("/contact")}
                 className="btn btn-filled-inverted inline-flex mt-6"
               >
-                Get in touch →
+                {t.footer.cta}
               </Link>
             </div>
           </div>
@@ -95,15 +97,15 @@ export default function Footer() {
               Luisa Cerin Ogbeiwi
             </p>
             <p className="label mt-0.5">
-              Software &amp; AI Developer · Milan, Italy
+              {t.footer.role}
             </p>
           </div>
 
           <div className="footer-meta flex gap-6 opacity-0">
             {[
-              { label: "GitHub", href: "https://github.com/browny26" },
+              { label: t.footer.github, href: "https://github.com/browny26" },
               {
-                label: "LinkedIn",
+                label: t.footer.linkedin,
                 href: "https://linkedin.com/in/luisa-cerin",
               },
             ].map(({ label, href }) => (

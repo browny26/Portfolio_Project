@@ -1,7 +1,8 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import type { CaseStudy as CaseStudyData, Project } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
+import type { CaseStudy as CaseStudyData, Project } from "@/i18n/types";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -21,6 +22,11 @@ const rule = "1px solid color-mix(in srgb, #1a1a1a 10%, transparent)";
 const bodyColor = "color-mix(in srgb, #1a1a1a 72%, #f5f3ef)";
 const imageSizes = "(max-width: 768px) 100vw, 1376px";
 
+// Counterparts for the dark band that holds Key decisions and Results.
+const darkRule = "1px solid rgba(245, 243, 239, 0.12)";
+const darkBodyColor = "rgba(245, 243, 239, 0.72)";
+const darkLabelColor = "rgba(245, 243, 239, 0.45)";
+
 function isRealLink(href?: string) {
   return Boolean(href && href !== "#");
 }
@@ -29,33 +35,53 @@ function Row({
   label,
   children,
   paddingBottom = "3rem",
+  onDark = false,
 }: {
   label: string;
   children: ReactNode;
   paddingBottom?: string;
+  /** On the dark band the rule and the label have to invert. */
+  onDark?: boolean;
 }) {
   return (
     <div
       className="cs-reveal grid grid-cols-1 md:grid-cols-[12rem_1fr] gap-4 md:gap-8"
       style={{
-        borderTop: rule,
+        borderTop: onDark ? darkRule : rule,
         paddingTop: "2.5rem",
         paddingBottom,
         opacity: 0,
       }}
     >
-      <span className="label">{label}</span>
+      <span
+        className="label"
+        style={onDark ? { color: darkLabelColor } : undefined}
+      >
+        {label}
+      </span>
       <div>{children}</div>
     </div>
   );
 }
 
-function SectionHead({ label, title }: { label: string; title: string }) {
+function SectionHead({
+  label,
+  title,
+  onDark = false,
+}: {
+  label: string;
+  title: string;
+  onDark?: boolean;
+}) {
   return (
-    <Row label={label} paddingBottom="1.5rem">
+    <Row label={label} paddingBottom="1.5rem" onDark={onDark}>
       <h2
-        className="font-bold tracking-[-0.03em] text-[#1a1a1a]"
-        style={{ fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)", lineHeight: 1.05 }}
+        className="font-bold tracking-[-0.03em]"
+        style={{
+          fontSize: "clamp(1.6rem, 3.2vw, 2.6rem)",
+          lineHeight: 1.05,
+          color: onDark ? "#f5f3ef" : "#1a1a1a",
+        }}
       >
         {title}
       </h2>
@@ -76,10 +102,11 @@ function Body({ children }: { children: ReactNode }) {
 
 function Figure({
   image,
-  priority = false,
+  eager = false,
 }: {
   image: CaseStudyData["hero"];
-  priority?: boolean;
+  /** Set on the hero figure, which is the LCP element of a case study. */
+  eager?: boolean;
 }) {
   return (
     <div
@@ -90,7 +117,7 @@ function Figure({
         src={image.src}
         alt={image.alt}
         fill
-        priority={priority}
+        loading={eager ? "eager" : "lazy"}
         sizes={imageSizes}
         className="object-cover"
       />
@@ -99,24 +126,25 @@ function Figure({
 }
 
 export default function CaseStudy({ project, index, next }: Props) {
+  const { t, href } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const cs = project.caseStudy;
 
   const links = [
     isRealLink(project.links.live)
-      ? { label: "View site ↗", href: project.links.live!, filled: true }
+      ? { label: t.caseStudy.viewSite, href: project.links.live!, filled: true }
       : null,
     isRealLink(project.links.repo)
-      ? { label: "GitHub →", href: project.links.repo!, filled: false }
+      ? { label: t.caseStudy.github, href: project.links.repo!, filled: false }
       : null,
   ].filter((l): l is NonNullable<typeof l> => l !== null);
 
   const meta = [
-    { label: "Role", value: cs.role },
-    { label: "Type", value: cs.client },
-    { label: "Year", value: cs.timeline },
-    { label: "Category", value: project.category },
+    { label: t.caseStudy.role, value: cs.role },
+    { label: t.caseStudy.type, value: cs.client },
+    { label: t.caseStudy.year, value: cs.timeline },
+    { label: t.caseStudy.category, value: project.category },
   ];
 
   // An odd number of gallery images opens with one full-width shot; the rest go in pairs.
@@ -149,6 +177,26 @@ export default function CaseStudy({ project, index, next }: Props) {
           delay: 0.7,
         },
       );
+
+      // Cards stagger in per grid. They carry a backdrop-filter, so the
+      // transform is cleared once the reveal is done: leaving one on the
+      // element is asking the browser to resolve a filter against a
+      // transformed box.
+      rootRef.current?.querySelectorAll(".cs-card-grid").forEach((grid) => {
+        gsap.fromTo(
+          grid.querySelectorAll(".card"),
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            stagger: 0.08,
+            ease: "power3.out",
+            clearProps: "transform",
+            scrollTrigger: { trigger: grid, start: "top 88%" },
+          },
+        );
+      });
 
       rootRef.current?.querySelectorAll(".cs-reveal").forEach((el) => {
         gsap.fromTo(
@@ -184,14 +232,14 @@ export default function CaseStudy({ project, index, next }: Props) {
               style={{ opacity: 0, marginBottom: "1.5rem" }}
             >
               <Link
-                href="/projects"
+                href={href("/projects")}
                 className="label hover:text-cream transition-colors"
                 style={{ textDecoration: "none" }}
               >
-                ← All projects
+                {t.caseStudy.allProjects}
               </Link>
               <span className="label">
-                Case study · {String(index).padStart(2, "0")}
+                {t.caseStudy.counter} · {String(index).padStart(2, "0")}
               </span>
             </div>
 
@@ -240,13 +288,9 @@ export default function CaseStudy({ project, index, next }: Props) {
               className="hero-meta flex flex-wrap items-center gap-2"
               style={{ opacity: 0, marginTop: "1.75rem" }}
             >
-              {project.tech.map((t) => (
-                <span
-                  key={t}
-                  className="tag"
-                  style={{ borderColor: "rgba(245,243,239,0.2)" }}
-                >
-                  {t}
+              {project.tech.map((tech) => (
+                <span key={tech} className="tag tag-inverted">
+                  {tech}
                 </span>
               ))}
             </div>
@@ -284,20 +328,20 @@ export default function CaseStudy({ project, index, next }: Props) {
         {/* Hero image, overlapping the dark band */}
         <div className="section" style={{ paddingTop: 0, paddingBottom: 0 }}>
           <div className="cs-reveal" style={{ marginTop: "-8rem", opacity: 0 }}>
-            <Figure image={cs.hero} priority />
+            <Figure image={cs.hero} eager />
           </div>
         </div>
 
         <div className="section" style={{ paddingTop: "5rem" }}>
           {/* Overview */}
-          <Row label="Overview">
+          <Row label={t.caseStudy.overview}>
             {cs.overview.map((p) => (
               <Body key={p}>{p}</Body>
             ))}
           </Row>
 
           {/* Challenge */}
-          <Row label="The challenge">
+          <Row label={t.caseStudy.challenge}>
             <Body>{cs.challenge.intro}</Body>
             <ul className="flex flex-col gap-1" style={{ marginTop: "1.5rem" }}>
               {cs.challenge.constraints.map((c) => (
@@ -312,7 +356,7 @@ export default function CaseStudy({ project, index, next }: Props) {
           </Row>
 
           {/* Process */}
-          <SectionHead label="Process" title="How it came together" />
+          <SectionHead label={t.caseStudy.process} title={t.caseStudy.processTitle} />
           {cs.process.map((step, i) => (
             <Row key={step.title} label={`0${i + 1}`}>
               <h3 className="text-[1.05rem] font-semibold text-[#1a1a1a]">
@@ -325,72 +369,99 @@ export default function CaseStudy({ project, index, next }: Props) {
             </Row>
           ))}
 
-          {/* Key decisions */}
-          <SectionHead
-            label="Key decisions"
-            title="Choices that shaped the product"
-          />
-          <div
-            className="cs-reveal grid grid-cols-1 md:grid-cols-3 gap-8"
-            style={{ opacity: 0, paddingBottom: "3rem" }}
-          >
-            {cs.decisions.map((d) => (
-              <div
-                key={d.title}
-                style={{ borderTop: "1px solid #1a1a1a", paddingTop: "1.25rem" }}
-              >
-                <h3 className="text-[1.05rem] font-semibold text-[#1a1a1a]">
-                  {d.title}
-                </h3>
-                <p className="label" style={{ marginTop: "1.25rem" }}>
-                  Why
-                </p>
-                <p
-                  className="text-[0.85rem] leading-[1.65]"
-                  style={{ color: bodyColor, marginTop: "0.35rem" }}
-                >
-                  {d.why}
-                </p>
-                <p className="label" style={{ marginTop: "1rem" }}>
-                  Trade-off
-                </p>
-                <p
-                  className="text-[0.85rem] leading-[1.65]"
-                  style={{ color: bodyColor, marginTop: "0.35rem" }}
-                >
-                  {d.tradeoff}
-                </p>
-              </div>
-            ))}
-          </div>
+        </div>
 
-          {/* Results */}
-          <SectionHead label="Results" title="What changed" />
-          <div
-            className="cs-reveal grid grid-cols-1 md:grid-cols-3 gap-8"
-            style={{ opacity: 0, paddingBottom: "3rem" }}
-          >
-            {cs.results.map((r) => (
-              <div key={r.label} style={{ borderTop: rule, paddingTop: "1.25rem" }}>
-                <p
-                  className="font-bold tracking-[-0.03em] text-[#1a1a1a]"
-                  style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)", lineHeight: 1 }}
-                >
-                  {r.value}
-                </p>
-                <p
-                  className="text-[0.85rem] leading-[1.6] text-taupe"
-                  style={{ marginTop: "0.75rem" }}
-                >
-                  {r.label}
-                </p>
-              </div>
-            ))}
-          </div>
+        {/* Key decisions and Results share one full-width dark band: the glass
+            cards need it behind them, and the band carries the fade so its
+            background stays inside the cards' backdrop root. */}
+        <div className="stage">
+          <div className="section" style={{ paddingTop: "4rem" }}>
+            {/* Key decisions */}
+            <SectionHead
+              onDark
+              label={t.caseStudy.decisions}
+              title={t.caseStudy.decisionsTitle}
+            />
+            <div
+              className="cs-card-grid grid grid-cols-1 md:grid-cols-3 gap-6"
+              style={{ paddingTop: "2.5rem", paddingBottom: "4rem" }}
+            >
+              {cs.decisions.map((d) => (
+                <div key={d.title} className="card" style={{ opacity: 0 }}>
+                  <h3 className="text-[1.05rem] font-semibold text-cream">
+                    {d.title}
+                  </h3>
+                  <p
+                    className="label"
+                    style={{ color: darkLabelColor, marginTop: "1.25rem" }}
+                  >
+                    {t.caseStudy.why}
+                  </p>
+                  <p
+                    className="text-[0.85rem] leading-[1.65]"
+                    style={{ color: darkBodyColor, marginTop: "0.35rem" }}
+                  >
+                    {d.why}
+                  </p>
+                  <p
+                    className="label"
+                    style={{ color: darkLabelColor, marginTop: "1rem" }}
+                  >
+                    {t.caseStudy.tradeoff}
+                  </p>
+                  <p
+                    className="text-[0.85rem] leading-[1.65]"
+                    style={{ color: darkBodyColor, marginTop: "0.35rem" }}
+                  >
+                    {d.tradeoff}
+                  </p>
+                </div>
+              ))}
+            </div>
 
+            {/* Results */}
+            <SectionHead
+              onDark
+              label={t.caseStudy.results}
+              title={t.caseStudy.resultsTitle}
+            />
+            <div
+              className="cs-card-grid grid grid-cols-1 md:grid-cols-2 gap-6"
+              style={{ paddingTop: "2.5rem" }}
+            >
+              {cs.results.map((r) => (
+                <div
+                  key={r.label}
+                  className="card flex flex-col justify-between"
+                  style={{ opacity: 0 }}
+                >
+                  <p
+                    className="font-bold tracking-[-0.03em] text-cream"
+                    style={{
+                      fontSize: "clamp(2rem, 4vw, 3.25rem)",
+                      lineHeight: 1.05,
+                      // Some values are words rather than numbers.
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    {r.value}
+                  </p>
+                  <p
+                    className="text-[0.85rem] leading-[1.6]"
+                    style={{ color: darkLabelColor, marginTop: "0.75rem" }}
+                  >
+                    {r.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="section" style={{ paddingTop: "5rem" }}>
           {/* Gallery */}
           {cs.gallery.length > 0 && (
-            <Row label="Gallery">
+            <Row label={t.caseStudy.gallery}>
               {galleryLead && (
                 <div className="cs-reveal" style={{ opacity: 0 }}>
                   <Figure image={galleryLead} />
@@ -412,7 +483,7 @@ export default function CaseStudy({ project, index, next }: Props) {
           )}
 
           {/* Learnings */}
-          <Row label="What I learned" paddingBottom="0">
+          <Row label={t.caseStudy.learnings} paddingBottom="0">
             {cs.learnings.map((p) => (
               <Body key={p}>{p}</Body>
             ))}
@@ -425,10 +496,10 @@ export default function CaseStudy({ project, index, next }: Props) {
           style={{ borderTop: rule, paddingTop: "4rem", paddingBottom: "5rem" }}
         >
           <span className="label block" style={{ marginBottom: "1rem" }}>
-            {next ? "Next project" : "More work"}
+            {next ? t.caseStudy.nextProject : t.caseStudy.moreWork}
           </span>
           <Link
-            href={next ? `/projects/${next.slug}` : "/projects"}
+            href={href(next ? `/projects/${next.slug}` : "/projects")}
             className="group inline-flex items-baseline gap-4"
             style={{ textDecoration: "none" }}
           >
@@ -436,7 +507,7 @@ export default function CaseStudy({ project, index, next }: Props) {
               className="font-bold tracking-[-0.03em] leading-[0.95] text-[#1a1a1a] group-hover:text-taupe transition-colors duration-300"
               style={{ fontSize: "clamp(2.5rem, 7vw, 6rem)" }}
             >
-              {next ? next.title : "All projects"}
+              {next ? next.title : t.projectsPage.label}
             </span>
             <span
               className="font-bold text-taupe transition-transform duration-300 group-hover:translate-x-2"
@@ -447,11 +518,11 @@ export default function CaseStudy({ project, index, next }: Props) {
           </Link>
           {next && (
             <Link
-              href="/projects"
+              href={href("/projects")}
               className="label block hover:text-[#1a1a1a] transition-colors"
               style={{ marginTop: "1.5rem", textDecoration: "none" }}
             >
-              All projects
+              {t.projectsPage.label}
             </Link>
           )}
         </div>

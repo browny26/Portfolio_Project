@@ -5,13 +5,13 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-import { projects } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const featured = projects.slice(0, 3);
-
 export default function WorkTeaser() {
+  const { t, href } = useI18n();
+  const featured = t.projects.slice(0, 3);
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -58,8 +58,8 @@ export default function WorkTeaser() {
             </h2>
           </div>
         </div>
-        <Link href="/projects" className="btn hidden md:inline-flex" style={{ fontSize: "0.72rem", padding: "0.65rem 1.25rem" }}>
-          All projects →
+        <Link href={href("/projects")} className="btn hidden md:inline-flex" style={{ fontSize: "0.72rem", padding: "0.65rem 1.25rem" }}>
+          {t.projectsPage.label}
         </Link>
       </div>
 
@@ -99,8 +99,8 @@ export default function WorkTeaser() {
             </div>
 
             <div className="flex flex-wrap gap-1.5 mt-3">
-              {project.tech.slice(0, 3).map((t) => (
-                <span key={t} className="tag">{t}</span>
+              {project.tech.slice(0, 3).map((tech) => (
+                <span key={tech} className="tag">{tech}</span>
               ))}
             </div>
           </article>
@@ -109,7 +109,7 @@ export default function WorkTeaser() {
 
       {/* Mobile CTA */}
       <div className="container px-8 pb-16 flex md:hidden">
-        <Link href="/projects" className="btn">All projects →</Link>
+        <Link href={href("/projects")} className="btn">{t.projectsPage.label}</Link>
       </div>
     </section>
   );

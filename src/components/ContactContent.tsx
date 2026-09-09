@@ -1,14 +1,15 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import { cvUrl } from "@/lib/data";
+import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
 
 const inputBase =
   "w-full py-[0.9rem] bg-transparent border-b text-[#1a1a1a] text-[0.9rem] font-[var(--font-syne)] outline-none transition-colors duration-200 placeholder:text-[#c8c4be] focus:border-[#1a1a1a]";
 
-export default function ContactPage() {
+export default function ContactContent() {
+  const { t } = useI18n();
   const headingRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -74,13 +75,14 @@ export default function ContactPage() {
             }}
           >
             <div className="h-16" />
-            <span className="label block mb-4">Get in touch</span>
+            <span className="label block mb-4">{t.contactPage.label}</span>
             <div className="overflow-clip">
               <h1
                 className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
                 style={{ fontSize: "clamp(3rem, 8vw, 8rem)" }}
               >
-                Let&apos;s <span className="text-taupe">talk</span>
+                {t.contactPage.title}{" "}
+                <span className="text-taupe">{t.contactPage.titleAccent}</span>
               </h1>
             </div>
           </div>
@@ -92,23 +94,26 @@ export default function ContactPage() {
             {/* Left — contact info */}
             <div ref={leftRef} className="opacity-0 flex flex-col gap-12">
               <p className="text-[0.95rem] leading-[1.75] text-[#8c8680] max-w-[26rem]">
-                Have a project in mind, a job offer, or just want to say hello?
-                I&apos;d love to hear from you.
+                {t.contactPage.intro}
               </p>
 
               <div className="flex flex-col gap-6">
                 {[
                   {
-                    label: "Email",
+                    label: t.contactPage.email,
                     value: "luisa.cerinogbeiwi@gmail.com",
                     href: "mailto:luisa.cerinogbeiwi@gmail.com",
                   },
                   {
-                    label: "Phone",
+                    label: t.contactPage.phone,
                     value: "+39 377 318 3236",
                     href: "tel:+393773183236",
                   },
-                  { label: "Location", value: "Milan, Italy", href: undefined },
+                  {
+                    label: t.contactPage.location,
+                    value: t.contactPage.locationValue,
+                    href: undefined,
+                  },
                 ].map(({ label, value, href }) => (
                   <div key={label}>
                     <p className="label mb-1">{label}</p>
@@ -129,7 +134,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <p className="label mb-3">Socials</p>
+                <p className="label mb-3">{t.contactPage.socials}</p>
                 <div className="flex flex-col">
                   {[
                     {
@@ -142,7 +147,7 @@ export default function ContactPage() {
                       href: "https://linkedin.com/in/luisa-cerin",
                       handle: "luisa-cerin",
                     },
-                    { label: "CV", href: cvUrl, handle: "PDF" },
+                    { label: t.contactPage.cv, href: t.cvUrl, handle: "PDF" },
                   ].map(({ label, href, handle }) => (
                     <a
                       key={label}
@@ -174,24 +179,23 @@ export default function ContactPage() {
                       className="font-bold tracking-[-0.03em] leading-none text-[#1a1a1a]"
                       style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)" }}
                     >
-                      Message sent!
+                      {t.contactPage.sentTitle}
                     </p>
                   </div>
                   <p className="text-[0.9rem] text-[#8c8680] leading-[1.7]">
-                    Thanks for reaching out. I&apos;ll get back to you within 24
-                    hours.
+                    {t.contactPage.sentBody}
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-7">
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="label block mb-2">Name *</label>
+                      <label className="label block mb-2">{t.contactPage.nameLabel}</label>
                       <input
                         name="name"
                         value={form.name}
                         onChange={handleChange}
-                        placeholder="Your name"
+                        placeholder={t.contactPage.namePlaceholder}
                         required
                         className={inputBase}
                         style={{
@@ -201,13 +205,13 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="label block mb-2">Email *</label>
+                      <label className="label block mb-2">{t.contactPage.emailLabel}</label>
                       <input
                         name="email"
                         type="email"
                         value={form.email}
                         onChange={handleChange}
-                        placeholder="your@email.com"
+                        placeholder={t.contactPage.emailPlaceholder}
                         required
                         className={inputBase}
                         style={{
@@ -219,7 +223,7 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="label block mb-2">Subject</label>
+                    <label className="label block mb-2">{t.contactPage.subjectLabel}</label>
                     <select
                       name="type"
                       value={form.type}
@@ -230,22 +234,32 @@ export default function ContactPage() {
                           "color-mix(in srgb, #1a1a1a 18%, transparent)",
                       }}
                     >
-                      <option value="">Select a topic</option>
-                      <option value="landing">Landing page</option>
-                      <option value="ecommerce">E-commerce</option>
-                      <option value="fullstack">Full-stack project</option>
-                      <option value="job">Job offer</option>
-                      <option value="other">Other</option>
+                      <option value="">
+                        {t.contactPage.subjectPlaceholder}
+                      </option>
+                      <option value="landing">
+                        {t.contactPage.subjects.landing}
+                      </option>
+                      <option value="ecommerce">
+                        {t.contactPage.subjects.ecommerce}
+                      </option>
+                      <option value="fullstack">
+                        {t.contactPage.subjects.fullstack}
+                      </option>
+                      <option value="job">{t.contactPage.subjects.job}</option>
+                      <option value="other">
+                        {t.contactPage.subjects.other}
+                      </option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="label block mb-2">Message *</label>
+                    <label className="label block mb-2">{t.contactPage.messageLabel}</label>
                     <textarea
                       name="message"
                       value={form.message}
                       onChange={handleChange}
-                      placeholder="Tell me about your project or idea..."
+                      placeholder={t.contactPage.messagePlaceholder}
                       rows={6}
                       required
                       className={`${inputBase} resize-none`}
@@ -261,7 +275,7 @@ export default function ContactPage() {
                     disabled={status === "sending"}
                     className="btn btn-filled self-start"
                   >
-                    {status === "sending" ? "Sending..." : "Send message →"}
+                    {status === "sending" ? t.contactPage.sending : t.contactPage.send}
                   </button>
                 </form>
               )}

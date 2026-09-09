@@ -1,13 +1,15 @@
 "use client";
 
-import { cvUrl, experience } from "@/lib/data";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
+import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ExperienceSection() {
+  const { t } = useI18n();
+  const experience = t.experience.items;
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -56,23 +58,19 @@ export default function ExperienceSection() {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
         <div>
-          <span className="label block mb-4">About me</span>
+          <span className="label block mb-4">{t.experience.label}</span>
           <div className="overflow-clip">
             <h2
               className="reveal-line block font-bold tracking-[-0.03em] text-[#1a1a1a]"
               style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
             >
-              Experience
+              {t.experience.title}
             </h2>
           </div>
         </div>
         <div>
           <p className="text-[0.95rem] leading-[1.75] text-taupe mt-1">
-            Full-stack developer and designer based in Milan. I&apos;m
-            passionate about crafting digital experiences that combine
-            thoughtful design with clean, scalable code. Currently studying
-            Digital Communication &amp; Computer Science at the University of
-            Milan.
+            {t.experience.bio}
           </p>
 
           <div
@@ -80,11 +78,27 @@ export default function ExperienceSection() {
             style={{ marginTop: "2rem" }}
           >
             {[
-              { label: "Location", value: "Milan, Italy" },
-              { label: "University", value: "Univ. degli Studi di Milano" },
-              { label: "Languages", value: "Italian · English (B2)" },
-              { label: "Status", value: "Open to work" },
-              { label: "CV", value: "Open PDF ↗", href: cvUrl },
+              {
+                label: t.experience.facts.location,
+                value: t.experience.facts.locationValue,
+              },
+              {
+                label: t.experience.facts.university,
+                value: t.experience.facts.universityValue,
+              },
+              {
+                label: t.experience.facts.languages,
+                value: t.experience.facts.languagesValue,
+              },
+              {
+                label: t.experience.facts.status,
+                value: t.experience.facts.statusValue,
+              },
+              {
+                label: t.experience.facts.cv,
+                value: t.experience.facts.cvValue,
+                href: t.cvUrl,
+              },
             ].map(({ label, value, href }) => (
               <div key={label}>
                 <p className="label mb-1">{label}</p>
@@ -148,9 +162,9 @@ export default function ExperienceSection() {
               </div>
 
               <div className="flex flex-wrap gap-2 content-start">
-                {exp.tech.map((t) => (
-                  <span key={t} className="tag">
-                    {t}
+                {exp.tech.map((tech) => (
+                  <span key={tech} className="tag">
+                    {tech}
                   </span>
                 ))}
               </div>
