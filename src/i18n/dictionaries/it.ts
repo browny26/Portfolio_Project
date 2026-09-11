@@ -66,7 +66,8 @@ const newmannCaseStudy: CaseStudy = {
   ],
   decisions: [
     {
-      title: "Riconoscere i mittenti automatici dagli header, l'AI solo come fallback",
+      title:
+        "Riconoscere i mittenti automatici dagli header, l'AI solo come fallback",
       why: "Newsletter e mittenti no-reply si dichiarano negli header dell'email. Leggerli non costa nulla e copre circa il 95% dei casi, così il modello viene chiamato solo per quelli davvero ambigui. Quelle email finiscono comunque su Pinecone come contesto: si salta soltanto la generazione della bozza.",
       tradeoff:
         "Un'euristica scritta a mano da mantenere via via che i mittenti cambiano il modo di identificarsi.",
@@ -84,7 +85,8 @@ const newmannCaseStudy: CaseStudy = {
         "Due interfacce su un solo modello: ogni cambiamento a ciò che una regola può fare deve arrivare in entrambe, e le conversazioni multi-turno con stato sono molto più difficili da testare di un form.",
     },
     {
-      title: "Parallelizzazione e caching invece di un framework AI più pesante",
+      title:
+        "Parallelizzazione e caching invece di un framework AI più pesante",
       why: "Il tempo di risposta che gli utenti percepiscono dipende da quante chiamate al modello girano in parallelo e da quante vengono evitate del tutto. Parallelizzazione con CompletableFuture, batching e una cache lazy per la valutazione dell'importanza hanno spostato i numeri; un ulteriore livello di astrazione no.",
       tradeoff:
         "Più concorrenza da governare, e il caching impone di essere espliciti su quando un verdetto obsoleto è accettabile.",
@@ -92,7 +94,8 @@ const newmannCaseStudy: CaseStudy = {
     {
       title: "Analytics e infrastruttura ospitate in UE fin dall'inizio",
       why: "Nel sistema passano contenuti di email e i clienti sono europei. Scegliere servizi ospitati in UE quando la codebase era ancora piccola ha reso la data residency un'impostazione invece che una migrazione.",
-      tradeoff: "Una scelta di provider più ristretta, a volte a un prezzo più alto.",
+      tradeoff:
+        "Una scelta di provider più ristretta, a volte a un prezzo più alto.",
     },
   ],
   results: [
@@ -504,6 +507,7 @@ const it: Dictionary = {
       "Next.js",
       "TypeScript",
       "Milano",
+      "Gallarate",
       "freelance",
       "portfolio",
       "siti web moderni",
@@ -559,14 +563,14 @@ const it: Dictionary = {
       cv: "CV",
       cvValue: "Apri il PDF ↗",
       location: "Sede",
-      locationValue: "Milano, Italia",
+      locationValue: "Gallarate, Italia",
     },
   },
 
   hero: {
     line1: "Software & AI",
     line2: "Developer",
-    based: "Con base a Milano, Italia",
+    based: "Con base a Gallarate, Italia",
     availability: "Disponibile per freelance",
     blurb:
       "Creo siti moderni e interfacce curate — unendo design e codice per dare vita a esperienze digitali uniche.",
@@ -669,13 +673,12 @@ const it: Dictionary = {
     },
   },
 
-  experience: {
+  about: {
     label: "Chi sono",
-    title: "Esperienza",
-    bio: "Full-stack developer e designer con base a Milano. Mi appassiona costruire esperienze digitali che uniscono un design pensato a codice pulito e scalabile. Attualmente studio Comunicazione Digitale e Informatica all'Università degli Studi di Milano.",
+    bio: "Full-stack e AI developer con base a Gallarate. Costruisco esperienze digitali che uniscono un design pensato a codice pulito e scalabile, integrando modelli LLM nei prodotti: assistenti conversazionali, automazioni e funzionalità basate su RAG. Attualmente studio Comunicazione Digitale e Informatica all'Università degli Studi di Milano.",
     facts: {
       location: "Sede",
-      locationValue: "Milano, Italia",
+      locationValue: "Gallarate, Italia",
       university: "Università",
       universityValue: "Univ. degli Studi di Milano",
       languages: "Lingue",
@@ -685,6 +688,11 @@ const it: Dictionary = {
       cv: "CV",
       cvValue: "Apri il PDF ↗",
     },
+  },
+
+  experience: {
+    label: "Percorso",
+    title: "Esperienza",
     items: [
       {
         role: "Frontend Developer",
@@ -787,7 +795,7 @@ const it: Dictionary = {
     line1: "Hai un progetto",
     line2: "in mente?",
     cta: "Scrivimi →",
-    role: "Software & AI Developer · Milano, Italia",
+    role: "Software & AI Developer · Gallarate, Italia",
     github: "GitHub",
     linkedin: "LinkedIn",
   },
@@ -812,7 +820,7 @@ const it: Dictionary = {
     email: "Email",
     phone: "Telefono",
     location: "Sede",
-    locationValue: "Milano, Italia",
+    locationValue: "Gallarate, Italia",
     socials: "Social",
     cv: "CV",
     sentTitle: "Messaggio inviato!",

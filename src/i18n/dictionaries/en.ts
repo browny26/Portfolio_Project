@@ -66,7 +66,8 @@ const newmannCaseStudy: CaseStudy = {
   ],
   decisions: [
     {
-      title: "Detect automated senders from headers first, AI only as a fallback",
+      title:
+        "Detect automated senders from headers first, AI only as a fallback",
       why: "Newsletters and no-reply senders identify themselves in the email headers. Reading them costs nothing and covers around 95% of cases, so the model is only called for the genuinely ambiguous ones. Those emails are still embedded into Pinecone as context, and only draft generation is skipped.",
       tradeoff:
         "A hand-written heuristic to maintain as senders change how they label themselves.",
@@ -92,7 +93,8 @@ const newmannCaseStudy: CaseStudy = {
     {
       title: "EU-hosted analytics and infrastructure from the start",
       why: "Email content passes through the system and the customers are European. Choosing EU-hosted services while the codebase was small made data residency a setting rather than a migration.",
-      tradeoff: "A narrower set of providers to choose from, sometimes at a higher price.",
+      tradeoff:
+        "A narrower set of providers to choose from, sometimes at a higher price.",
     },
   ],
   results: [
@@ -199,12 +201,14 @@ const atlasCaseStudy: CaseStudy = {
     {
       title: "Groq and OpenAI instead of a local model",
       why: "Local inference was free but far too slow for an interactive flow. Hosted models made generation near-instant and let me pick the right model for each step.",
-      tradeoff: "The app now depends on external providers and pays per request.",
+      tradeoff:
+        "The app now depends on external providers and pays per request.",
     },
     {
       title: "JWT plus Google OAuth",
       why: "Email and password with JWT keeps the API stateless, while Google OAuth removes friction for people who just want to try the app.",
-      tradeoff: "Two sign-in paths mean twice the edge cases to handle and test.",
+      tradeoff:
+        "Two sign-in paths mean twice the edge cases to handle and test.",
     },
     {
       title: "Real flights from the Amadeus API",
@@ -216,7 +220,8 @@ const atlasCaseStudy: CaseStudy = {
   results: [
     {
       value: "5 min → seconds",
-      label: "AI itinerary generation, before and after moving to Groq and OpenAI",
+      label:
+        "AI itinerary generation, before and after moving to Groq and OpenAI",
     },
     {
       value: "2",
@@ -327,7 +332,8 @@ const sacithLabCaseStudy: CaseStudy = {
   results: [
     {
       value: "IT · EN",
-      label: "A bilingual site that positions the stool as a premium design product",
+      label:
+        "A bilingual site that positions the stool as a premium design product",
     },
     {
       value: "WebP",
@@ -497,6 +503,7 @@ const en: Dictionary = {
       "Next.js",
       "TypeScript",
       "Milan",
+      "Gallarate",
       "freelance",
       "portfolio",
       "modern websites",
@@ -552,14 +559,14 @@ const en: Dictionary = {
       cv: "CV",
       cvValue: "Open PDF ↗",
       location: "Location",
-      locationValue: "Milan, Italy",
+      locationValue: "Gallarate, Italy",
     },
   },
 
   hero: {
     line1: "Software & AI",
     line2: "Developer",
-    based: "Based in Milan, Italy",
+    based: "Based in Gallarate, Italy",
     availability: "Available for freelance",
     blurb:
       "I craft modern websites and sleek interfaces — blending design and code to deliver unique digital experiences.",
@@ -662,13 +669,12 @@ const en: Dictionary = {
     },
   },
 
-  experience: {
+  about: {
     label: "About me",
-    title: "Experience",
-    bio: "Full-stack developer and designer based in Milan. I'm passionate about crafting digital experiences that combine thoughtful design with clean, scalable code. Currently studying Digital Communication & Computer Science at the University of Milan.",
+    bio: "Full-stack and AI developer based in Gallarate, Italy. I build digital experiences that combine thoughtful design with clean, scalable code, bringing LLMs into products: conversational assistants, automations and RAG-based features. Currently studying Digital Communication & Computer Science at the University of Milan.",
     facts: {
       location: "Location",
-      locationValue: "Milan, Italy",
+      locationValue: "Gallarate, Italy",
       university: "University",
       universityValue: "Univ. degli Studi di Milano",
       languages: "Languages",
@@ -678,6 +684,11 @@ const en: Dictionary = {
       cv: "CV",
       cvValue: "Open PDF ↗",
     },
+  },
+
+  experience: {
+    label: "Career",
+    title: "Experience",
     items: [
       {
         role: "Frontend Developer",
@@ -780,7 +791,7 @@ const en: Dictionary = {
     line1: "Have a project",
     line2: "in mind?",
     cta: "Get in touch →",
-    role: "Software & AI Developer · Milan, Italy",
+    role: "Software & AI Developer · Gallarate, Italy",
     github: "GitHub",
     linkedin: "LinkedIn",
   },
@@ -805,7 +816,7 @@ const en: Dictionary = {
     email: "Email",
     phone: "Phone",
     location: "Location",
-    locationValue: "Milan, Italy",
+    locationValue: "Gallarate, Italy",
     socials: "Socials",
     cv: "CV",
     sentTitle: "Message sent!",

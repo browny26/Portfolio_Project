@@ -134,9 +134,9 @@ export type Dictionary = {
     groups: Record<string, string[]>;
   };
 
-  experience: {
+  /** The standalone "who I am" section, sitting between the hero and the work. */
+  about: {
     label: string;
-    title: string;
     bio: string;
     facts: {
       location: string;
@@ -150,6 +150,11 @@ export type Dictionary = {
       cv: string;
       cvValue: string;
     };
+  };
+
+  experience: {
+    label: string;
+    title: string;
     items: Experience[];
   };
 

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/i18n/provider";
+import { useIntroDone } from "./introSignal";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLenis } from "./SmoothScroll";
 
@@ -41,6 +42,7 @@ export default function Header() {
   const route = routeOf(pathname);
   const isHome = route === "/";
   const initialIsHome = useRef(isHome);
+  const introDone = useIntroDone();
 
   // Sections live on the home page; `hash` links scroll instead of navigating.
   const navLinks = [
@@ -89,14 +91,27 @@ export default function Header() {
   const chrome = onDark ? "#f5f3ef" : "#1a1a1a";
   const glassVisible = scrolled && !menuOpen;
 
+  // On the home page the bar drops in with the hero, the moment the intro hands
+  // the page over — which is immediately when the intro is skipped. Elsewhere
+  // there is no intro to wait for.
+  const hasDropped = useRef(false);
   useEffect(() => {
-    const delay = initialIsHome.current ? 2.4 : 0.2;
+    if (hasDropped.current) return;
+    if (initialIsHome.current && !introDone) return;
+    hasDropped.current = true;
+
     gsap.fromTo(
       headerRef.current,
       { y: -60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power3.out",
+        delay: initialIsHome.current ? 0 : 0.2,
+      },
     );
-  }, []);
+  }, [introDone]);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);

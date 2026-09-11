@@ -26,3 +26,13 @@ export const localeNames: Record<Locale, string> = {
   it: "IT",
   en: "EN",
 };
+
+/**
+ * The greeting each locale opens with. The intro alternates between them —
+ * the visitor's own language first — so the site says hello in both languages
+ * it speaks before the home page appears.
+ */
+export const greetings: Record<Locale, string> = {
+  it: "Ciao",
+  en: "Hello",
+};

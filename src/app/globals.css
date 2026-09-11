@@ -114,6 +114,65 @@ body {
   justify-content: center;
 }
 
+/* The window one greeting is visible through. Its height and the height of each
+   word are the same 1.2em of the same font-size, so the column steps by exactly
+   one word and never shows two at once. */
+.intro-mask {
+  height: 1.2em;
+  overflow: clip;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: #1a1a1a;
+}
+
+.intro-word {
+  height: 1.2em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.intro-line {
+  width: 6rem;
+  height: 1px;
+  background: #1a1a1a;
+  transform-origin: left center;
+}
+
+/* The line fills for as long as the greetings run: it is the only thing telling
+   the visitor how much of the intro is left. */
+@keyframes intro-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-words,
+  .intro-line {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ─── About: il testo che si accende scorrendo ─── */
+/* Ogni parola parte quasi trasparente e GSAP la porta a 1 legandola allo
+   scroll. Lo stato di riposo sta qui e non nel JavaScript, così non c'è un
+   fotogramma di testo pieno prima che ScrollTrigger prenda il controllo. */
+.about-copy span {
+  opacity: 0.18;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-copy span {
+    opacity: 1;
+  }
+}
+
 /* ─── Nav overlay ─── */
 .menu-overlay {
   position: fixed;

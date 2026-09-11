@@ -56,68 +56,15 @@ export default function ExperienceSection() {
         borderTop: "1px solid color-mix(in srgb, #1a1a1a 12%, transparent)",
       }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-        <div>
-          <span className="label block mb-4">{t.experience.label}</span>
-          <div className="overflow-clip">
-            <h2
-              className="reveal-line block font-bold tracking-[-0.03em] text-[#1a1a1a]"
-              style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
-            >
-              {t.experience.title}
-            </h2>
-          </div>
-        </div>
-        <div>
-          <p className="text-[0.95rem] leading-[1.75] text-taupe mt-1">
-            {t.experience.bio}
-          </p>
-
-          <div
-            className="grid grid-cols-2 gap-4 mt-8"
-            style={{ marginTop: "2rem" }}
+      <div className="mb-16">
+        <span className="label block mb-4">{t.experience.label}</span>
+        <div className="overflow-clip">
+          <h2
+            className="reveal-line block font-bold tracking-[-0.03em] text-[#1a1a1a]"
+            style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
           >
-            {[
-              {
-                label: t.experience.facts.location,
-                value: t.experience.facts.locationValue,
-              },
-              {
-                label: t.experience.facts.university,
-                value: t.experience.facts.universityValue,
-              },
-              {
-                label: t.experience.facts.languages,
-                value: t.experience.facts.languagesValue,
-              },
-              {
-                label: t.experience.facts.status,
-                value: t.experience.facts.statusValue,
-              },
-              {
-                label: t.experience.facts.cv,
-                value: t.experience.facts.cvValue,
-                href: t.cvUrl,
-              },
-            ].map(({ label, value, href }) => (
-              <div key={label}>
-                <p className="label mb-1">{label}</p>
-                {href ? (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-medium text-[#1a1a1a] hover:text-taupe transition-colors"
-                    style={{ textDecoration: "none" }}
-                  >
-                    {value}
-                  </a>
-                ) : (
-                  <p className="text-sm font-medium text-[#1a1a1a]">{value}</p>
-                )}
-              </div>
-            ))}
-          </div>
+            {t.experience.title}
+          </h2>
         </div>
       </div>
 

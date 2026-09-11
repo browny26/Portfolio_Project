@@ -42,7 +42,12 @@ export function proxy(request: NextRequest) {
 
   const locale = getLocale(request);
   request.nextUrl.pathname = `/${locale}${pathname}`;
-  return NextResponse.redirect(request.nextUrl);
+
+  const response = NextResponse.redirect(request.nextUrl);
+  // Where this redirect points depends on the request's own language header,
+  // so a shared cache must not hand one visitor's destination to the next.
+  response.headers.set("Vary", "Accept-Language");
+  return response;
 }
 
 export const config = {
