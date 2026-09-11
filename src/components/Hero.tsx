@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useI18n } from "@/i18n/provider";
 import { useIntroDone } from "./introSignal";
+import type { CSSProperties } from "react";
 
 /* The two headline colours are not the colours you see. The type sits on top of
    the mark in `mix-blend-mode: difference`, which subtracts it from whatever is
@@ -19,8 +20,8 @@ export default function Hero() {
   const introDone = useIntroDone();
   const sectionRef = useRef<HTMLElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
-  const line1Ref = useRef<HTMLDivElement>(null);
-  const line2Ref = useRef<HTMLDivElement>(null);
+  const line1Ref = useRef<HTMLSpanElement>(null);
+  const line2Ref = useRef<HTMLSpanElement>(null);
   const metaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -92,44 +93,53 @@ export default function Hero() {
           </div>
         </div>
 
-        <div
-          className="relative flex flex-col gap-[0.2rem]"
+        {/* One <h1> for the whole two-line headline: aria-label carries the
+            clean accessible name so the site's owner and role read as a single
+            phrase, while the visible lines keep the type-driven layout. Inner
+            elements are <span>s so the h1 contains phrasing content only,
+            which is what the spec requires. */}
+        <h1
+          aria-label={`Luisa Cerin Ogbeiwi — ${t.hero.line1} ${t.hero.line2}`}
+          className="relative flex flex-col gap-[0.2rem] m-0"
           style={{ mixBlendMode: "difference" }}
         >
-          {[
-            {
-              ref: line1Ref,
-              text: t.hero.line1,
-              color: INK_OVER_CREAM,
-              italic: false,
-            },
-            {
-              ref: line2Ref,
-              text: t.hero.line2,
-              color: TAUPE_OVER_CREAM,
-              italic: true,
-            },
-          ].map(({ ref, text, color, italic }) => (
-            <div
+          {(
+            [
+              {
+                ref: line1Ref,
+                text: t.hero.line1,
+                color: INK_OVER_CREAM,
+                italic: false,
+              },
+              {
+                ref: line2Ref,
+                text: t.hero.line2,
+                color: TAUPE_OVER_CREAM,
+                italic: true,
+              },
+            ] as const
+          ).map(({ ref, text, color, italic }) => (
+            <span
               key={text}
               className="overflow-clip flex items-center justify-center"
             >
-              <div
+              <span
                 ref={ref}
                 style={{
+                  display: "block",
                   fontSize: "clamp(3.2rem, 8.5vw, 6rem)",
                   color,
                   // Hidden from the first paint, so nothing flashes into place
                   // while the intro is still covering the screen.
                   transform: "translateY(110%)",
-                }}
+                } as CSSProperties}
                 className={`font-bold leading-none tracking-[-0.03em] ${italic ? "italic" : ""}`}
               >
                 {text}
-              </div>
-            </div>
+              </span>
+            </span>
           ))}
-        </div>
+        </h1>
       </div>
 
       <div

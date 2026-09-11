@@ -2,7 +2,9 @@ import Header from "@/components/Header";
 import SmoothScroll from "@/components/SmoothScroll";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { pageMetadata } from "@/i18n/metadata";
 import { I18nProvider } from "@/i18n/provider";
+import { siteUrl } from "@/site";
 import type { Metadata } from "next";
 import { DM_Mono, Syne } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -32,9 +34,18 @@ export async function generateMetadata({
   const t = await getDictionary(lang);
 
   return {
-    title: t.meta.title,
-    description: t.meta.description,
+    // metadataBase is what turns the relative `alternates.canonical` and the
+    // `/opengraph-image` OG image into full absolute URLs — crawlers and
+    // social-preview bots reject anything relative.
+    metadataBase: siteUrl,
     keywords: t.meta.keywords,
+    authors: [{ name: "Luisa Cerin Ogbeiwi" }],
+    creator: "Luisa Cerin Ogbeiwi",
+    ...pageMetadata({
+      lang,
+      title: t.meta.title,
+      description: t.meta.description,
+    }),
   };
 }
 

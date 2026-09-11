@@ -61,7 +61,9 @@ export default function AboutSection() {
         }}
       >
         <div className="section">
-          <span className="label block mb-8">{t.about.label}</span>
+          {/* h2 for the section landmark; the .label class only carries the
+              visual size — search engines and screen readers read a heading. */}
+          <h2 className="label block mb-8 m-0">{t.about.label}</h2>
 
           {/* Full bleed inside the section: no max-width, so the bio runs the
               whole measure. The type scales up with it to keep the lines from

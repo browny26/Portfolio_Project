@@ -11,7 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ProjectsBanner() {
   const { t, href } = useI18n();
   const bannerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLHeadingElement>(null);
   const arrowRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -59,9 +59,9 @@ export default function ProjectsBanner() {
             {/* Left */}
             <div>
               <span className="label block mb-3">{t.projectsBanner.label}</span>
-              <div
+              <h2
                 ref={textRef}
-                className="flex items-baseline gap-6 flex-wrap"
+                className="flex items-baseline gap-6 flex-wrap m-0"
               >
                 <span
                   style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
@@ -75,7 +75,7 @@ export default function ProjectsBanner() {
                 >
                   {t.projectsBanner.titleItalic}
                 </span>
-              </div>
+              </h2>
             </div>
 
             {/* Right arrow */}

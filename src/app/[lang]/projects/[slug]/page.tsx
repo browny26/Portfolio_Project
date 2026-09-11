@@ -2,7 +2,7 @@ import CaseStudy from "@/components/CaseStudy";
 import NotFoundContent from "@/components/NotFoundContent";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { alternates } from "@/i18n/metadata";
+import { pageMetadata } from "@/i18n/metadata";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -36,11 +36,15 @@ export async function generateMetadata({
     return { title: t.meta.notFoundTitle, robots: { index: false, follow: true } };
   }
 
-  return {
+  return pageMetadata({
+    lang,
+    route: `/projects/${slug}`,
     title: `${project.title} — ${t.meta.caseStudySuffix}`,
     description: project.caseStudy.tagline,
-    alternates: alternates(lang, `/projects/${slug}`),
-  };
+    // Use the case study's own hero image for social previews so a shared
+    // link previews the actual project, not the site-wide default.
+    images: [project.caseStudy.hero.src],
+  });
 }
 
 export default async function CaseStudyPage({
