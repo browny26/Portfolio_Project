@@ -13,8 +13,9 @@ const newmannCaseStudy: CaseStudy = {
   },
   overview: [
     "Newmann is a B2B SaaS platform that connects to Gmail or Outlook and turns an inbox into something manageable: it decides what actually deserves attention, writes draft replies grounded in how you have answered similar emails before, and applies the labels and rules you define, either in a rule builder or by describing them to a chatbot. The platform is currently in testing ahead of its first release.",
-    "I joined at inception as Founding Engineer and Tech Lead. I own the architecture and the technology choices, from stack selection to the design of the REST API in Java Spring Boot, and the AI engineering end to end: every prompt is written from scratch and the retrieval pipeline on Pinecone is mine. I work alongside a front-end and a back-end developer who carry the implementation forward, and the decisions that shape the system come through me.",
   ],
+  myRole:
+    "I joined at inception as Founding Engineer and Tech Lead. I own the architecture and the technology choices, from stack selection to the design of the REST API in Java Spring Boot, and the AI engineering end to end: every prompt is written from scratch and the retrieval pipeline on Pinecone is mine. I work alongside a front-end and a back-end developer who carry the implementation forward, and the decisions that shape the system come through me.",
   challenge: {
     intro:
       "A generic model can write a polite email. It cannot write your email. The product only works if the draft sounds like the person sending it and if the assistant knows when to stay silent, and both of those have to hold while processing every message that lands in an inbox, at a cost per email that a subscription can absorb.",
@@ -844,6 +845,7 @@ const en: Dictionary = {
     allProjects: "← All projects",
     counter: "Case study",
     role: "Role",
+    myRole: "My role",
     type: "Type",
     year: "Year",
     category: "Category",

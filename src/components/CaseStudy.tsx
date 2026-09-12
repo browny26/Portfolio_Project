@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-import { ReactNode, useEffect, useRef } from "react";
+import { Fragment, ReactNode, useEffect, useMemo, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -89,6 +89,70 @@ function SectionHead({
   );
 }
 
+/**
+ * Editorial paragraph whose words light up one by one as the reader scrolls.
+ * Same motor as the About section on the home — words at 0.18 opacity at rest,
+ * GSAP scrub takes them to 1 across the row — but sized down: this is body
+ * prose that has to stay readable, not a display statement. Applied only to
+ * the load-bearing narrative paragraphs (Overview, My role); the rest of the
+ * case study keeps the plain <Body> so the effect stays intentional.
+ */
+function RevealCopy({ text }: { text: string }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const words = useMemo(() => text.split(/\s+/), [text]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // CSS resting state is 0.18 opacity; clear it so reduced-motion
+      // readers get the full paragraph, not a permanently faded one.
+      gsap.set(el.querySelectorAll("span"), { opacity: 1 });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      const spans = el.querySelectorAll("span");
+      if (!spans || spans.length === 0) return;
+      gsap.to(spans, {
+        opacity: 1,
+        ease: "none",
+        stagger: 0.35,
+        scrollTrigger: {
+          trigger: el,
+          start: "top 78%",
+          end: "bottom 62%",
+          scrub: 0.4,
+        },
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [text]);
+
+  return (
+    <p
+      ref={ref}
+      className="reveal-copy font-medium tracking-[-0.005em] text-[#1a1a1a]"
+      style={{
+        fontSize: "clamp(1.1rem, 1.7vw, 1.4rem)",
+        lineHeight: 1.6,
+        textWrap: "pretty",
+        maxWidth: "42rem",
+        marginBottom: "1.25rem",
+      }}
+    >
+      {words.map((word, i) => (
+        <Fragment key={`${word}-${i}`}>
+          <span>{word}</span>
+          {i < words.length - 1 ? " " : ""}
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
 function Body({ children }: { children: ReactNode }) {
   return (
     <p
@@ -98,6 +162,71 @@ function Body({ children }: { children: ReactNode }) {
       {children}
     </p>
   );
+}
+
+/**
+ * A Results value that counts up to its number the first time it enters view.
+ * Only the digits in the string animate: the prefix ("~", "€") and suffix
+ * ("%", " strade", " min → secondi") come along unchanged, so the final frame
+ * matches the source string exactly. Values with no leading digits (e.g.
+ * "Gmail · Outlook", "Idempotente") are left as static text — the regex
+ * simply doesn't match and the effect is a no-op.
+ */
+const NUMERIC = /^(\D*)(\d+(?:[.,]\d+)?)(.*)$/;
+
+function Counter({ value }: { value: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const parsed = useMemo(() => value.match(NUMERIC), [value]);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !parsed) return;
+
+    const [, prefix, numStr, suffix] = parsed;
+    const target = parseFloat(numStr.replace(",", "."));
+    const decimals = numStr.includes(".") || numStr.includes(",") ? 1 : 0;
+
+    // Reset to 0 before the observer fires: the SSR/hydration output carries
+    // the full value, and this is the first client tick that overrides it.
+    // Results sit well below the fold on every case study, so the swap
+    // happens off-screen — no visible flash for a normal top-of-page load.
+    el.textContent = prefix + (decimals === 0 ? "0" : "0.0") + suffix;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = value;
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          io.disconnect();
+          const start = performance.now();
+          const duration = 1200;
+          const step = (now: number) => {
+            const t = Math.min(1, (now - start) / duration);
+            // Ease-out cubic: fast start, gentle land.
+            const eased = 1 - Math.pow(1 - t, 3);
+            const v = target * eased;
+            const rendered =
+              decimals === 0 ? Math.round(v).toString() : v.toFixed(1);
+            el.textContent = prefix + rendered + suffix;
+            if (t < 1) requestAnimationFrame(step);
+            // Land on the source string so any character we don't understand
+            // (thin spaces, non-breaking punctuation) matches at the end.
+            else el.textContent = value;
+          };
+          requestAnimationFrame(step);
+        });
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [value, parsed]);
+
+  return <span ref={ref}>{value}</span>;
 }
 
 function Figure({
@@ -181,10 +310,12 @@ export default function CaseStudy({ project, index, next }: Props) {
       // Cards stagger in per grid. They carry a backdrop-filter, so the
       // transform is cleared once the reveal is done: leaving one on the
       // element is asking the browser to resolve a filter against a
-      // transformed box.
+      // transformed box. Applies to both the dark glass cards
+      // (Key Decisions, Results) and the cream-band constraint cards
+      // (Challenge) — one selector, same gesture on both bands.
       rootRef.current?.querySelectorAll(".cs-card-grid").forEach((grid) => {
         gsap.fromTo(
-          grid.querySelectorAll(".card"),
+          grid.querySelectorAll(".card, .constraint-card"),
           { opacity: 0, y: 24 },
           {
             opacity: 1,
@@ -333,26 +464,50 @@ export default function CaseStudy({ project, index, next }: Props) {
         </div>
 
         <div className="section" style={{ paddingTop: "5rem" }}>
-          {/* Overview */}
+          {/* Overview — what the project is */}
           <Row label={t.caseStudy.overview}>
             {cs.overview.map((p) => (
-              <Body key={p}>{p}</Body>
+              <RevealCopy key={p} text={p} />
             ))}
           </Row>
+
+          {/* My role — what the author personally did. Rendered only when the
+              case study provides it, so projects without a personal-role
+              paragraph (e.g. shorter showcases) don't get an empty row. */}
+          {cs.myRole && (
+            <Row label={t.caseStudy.myRole}>
+              <RevealCopy text={cs.myRole} />
+            </Row>
+          )}
 
           {/* Challenge */}
           <Row label={t.caseStudy.challenge}>
             <Body>{cs.challenge.intro}</Body>
-            <ul className="flex flex-col gap-1" style={{ marginTop: "1.5rem" }}>
-              {cs.challenge.constraints.map((c) => (
-                <li
+            {/* Constraints as cards on the cream band. `cs-card-grid` is what
+                the entrance stagger below hooks on; the grid holds up at 1–3
+                columns depending on width so counts from 3 to 5 sit evenly. */}
+            <div
+              className="cs-card-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+              style={{ marginTop: "1.5rem" }}
+            >
+              {cs.challenge.constraints.map((c, i) => (
+                <div
                   key={c}
-                  className="text-[0.85rem] leading-[1.6] text-taupe"
+                  className="constraint-card"
+                  style={{ opacity: 0 }}
                 >
-                  — {c}
-                </li>
+                  <span className="label" style={{ color: "#c8c4be" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <p
+                    className="text-[0.9rem] leading-[1.65]"
+                    style={{ color: bodyColor }}
+                  >
+                    {c}
+                  </p>
+                </div>
               ))}
-            </ul>
+            </div>
           </Row>
 
           {/* Process */}
@@ -442,9 +597,10 @@ export default function CaseStudy({ project, index, next }: Props) {
                       lineHeight: 1.05,
                       // Some values are words rather than numbers.
                       overflowWrap: "break-word",
+                      fontVariantNumeric: "tabular-nums",
                     }}
                   >
-                    {r.value}
+                    <Counter value={r.value} />
                   </p>
                   <p
                     className="text-[0.85rem] leading-[1.6]"

@@ -13,8 +13,9 @@ const newmannCaseStudy: CaseStudy = {
   },
   overview: [
     "Newmann è una piattaforma SaaS B2B che si collega a Gmail o Outlook e rende gestibile la casella di posta: decide che cosa merita davvero attenzione, scrive bozze di risposta fondate su come hai risposto a email simili in passato e applica le etichette e le regole che definisci, in un rule builder oppure descrivendole a un chatbot. La piattaforma è attualmente in fase di test, in vista del primo rilascio.",
-    "Ho partecipato al progetto dal primo giorno come Founding Engineer e Tech Lead. Ho la responsabilità dell'architettura e delle scelte tecnologiche, dalla selezione dello stack al design della REST API in Java Spring Boot, e dell'AI engineering dall'inizio alla fine: ogni prompt è scritto da zero e la pipeline di retrieval su Pinecone è mia. Lavoro insieme a due persone, una sul front-end e una sul back-end, che portano avanti l'implementazione, e le decisioni che danno forma al sistema passano da me.",
   ],
+  myRole:
+    "Ho partecipato al progetto dal primo giorno come Founding Engineer e Tech Lead. Ho la responsabilità dell'architettura e delle scelte tecnologiche, dalla selezione dello stack al design della REST API in Java Spring Boot, e dell'AI engineering dall'inizio alla fine: ogni prompt è scritto da zero e la pipeline di retrieval su Pinecone è mia. Lavoro insieme a due persone, una sul front-end e una sul back-end, che portano avanti l'implementazione, e le decisioni che danno forma al sistema passano da me.",
   challenge: {
     intro:
       "Un modello generico sa scrivere un'email educata. Non sa scrivere la tua email. Il prodotto funziona solo se la bozza suona come la persona che la manda e se l'assistente capisce quando è meglio tacere: due condizioni da rispettare elaborando ogni messaggio che arriva in casella, a un costo per email che un abbonamento possa assorbire.",
@@ -848,6 +849,7 @@ const it: Dictionary = {
     allProjects: "← Tutti i progetti",
     counter: "Case study",
     role: "Ruolo",
+    myRole: "Il mio ruolo",
     type: "Tipo",
     year: "Anno",
     category: "Categoria",

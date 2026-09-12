@@ -159,16 +159,20 @@ body {
   }
 }
 
-/* ─── About: il testo che si accende scorrendo ─── */
+/* ─── Reveal on scroll: il testo che si accende scorrendo ─── */
 /* Ogni parola parte quasi trasparente e GSAP la porta a 1 legandola allo
    scroll. Lo stato di riposo sta qui e non nel JavaScript, così non c'è un
-   fotogramma di testo pieno prima che ScrollTrigger prenda il controllo. */
-.about-copy span {
+   fotogramma di testo pieno prima che ScrollTrigger prenda il controllo.
+   Usato dall'About della home e dai paragrafi Overview / My role dei case
+   study — stesso motore, dimensione tipografica diversa per contesto. */
+.about-copy span,
+.reveal-copy span {
   opacity: 0.18;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-copy span {
+  .about-copy span,
+  .reveal-copy span {
     opacity: 1;
   }
 }
@@ -198,6 +202,14 @@ body {
 }
 
 /* ─── Button base ─── */
+/* Every button carries the same fill-wipe: a coloured layer slides in from the
+   left on hover, and the label recolours to stay legible over it. The wipe
+   lives on a ::before pinned behind the content — `overflow: hidden` clips it
+   to the button, `isolation: isolate` scopes its `z-index: -1` so it never
+   sinks below the page. The button's own background stays as it was, which is
+   what the wipe reveals when it retracts on mouseout.
+   Per-variant, only two things change: the colour of the wipe (whatever the
+   button should look like AFTER the hover), and the text colour to sit on it. */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -211,30 +223,54 @@ body {
   background: transparent;
   color: #1a1a1a;
   cursor: pointer;
-  transition:
-    background 0.25s,
-    color 0.25s;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.35s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #1a1a1a;
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+  z-index: -1;
 }
 .btn:hover {
-  background: #1a1a1a;
   color: #f5f3ef;
 }
+.btn:hover::before {
+  transform: translateX(0);
+}
+
+/* Filled ink → wipes to cream (so it reads as outlined-ink on cream on hover). */
 .btn-filled {
   background: #1a1a1a;
   color: #f5f3ef;
 }
+.btn-filled::before {
+  background: #f5f3ef;
+}
+.btn-filled:hover {
+  color: #1a1a1a;
+}
+
+/* Filled cream (used on dark bands) → wipes to ink for the same inversion. */
 .btn-filled-inverted {
   background: #f5f3ef;
   color: #1a1a1a;
   border-color: #f5f3ef;
 }
-.btn-filled:hover {
-  background: transparent;
-  color: #1a1a1a;
+.btn-filled-inverted::before {
+  background: #1a1a1a;
 }
 .btn-filled-inverted:hover {
-  background: transparent;
   color: #f5f3ef;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::before { transition-duration: 0.01ms; }
 }
 
 /* ─── Section spacing ─── */
@@ -289,6 +325,25 @@ body {
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
   padding: 1.5rem;
+  transition:
+    transform 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    border-color 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    background 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    box-shadow 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* On hover the card lifts, the top edge highlight strengthens (from the same
+   inset shadow the card already uses at rest) and a low, wide drop shadow
+   places it above the band it's sitting on. No new stacking context — the
+   backdrop-filter continues to blur what's behind, which is why the transform
+   only lives during hover and doesn't get parked on the element. */
+.card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(245, 243, 239, 0.35);
+  background: rgba(245, 243, 239, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 24px 60px -30px rgba(0, 0, 0, 0.6);
 }
 
 @media (min-width: 768px) {
@@ -297,10 +352,53 @@ body {
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .card { transition-duration: 0.01ms; }
+  .card:hover { transform: none; }
+}
+
 /* The band the glass sits on, full width like the hero and the footer.
    It also carries the GSAP fade: a transform or a partial opacity starts a new
    backdrop root, so the background has to live on the animated element itself
    or the cards would have nothing left to blur. */
 .stage {
   background: #1a1a1a;
+}
+
+/* ─── Constraint card (case study · La sfida) ───────────────────
+   Sibling of .card designed for the cream band. Same H02 gesture — lift,
+   border strengthens, low drop shadow — but tuned for ink-on-cream: no
+   backdrop-filter, no inset cream highlight (which would vanish on the
+   light ground), and a slightly softer lift so a grid of five doesn't
+   read as jumpy. */
+.constraint-card {
+  padding: 1.5rem;
+  border: 1px solid color-mix(in srgb, #1a1a1a 12%, transparent);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition:
+    transform 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    border-color 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    background 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    box-shadow 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.constraint-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, #1a1a1a 28%, transparent);
+  background: color-mix(in srgb, #1a1a1a 3%, transparent);
+  box-shadow: 0 20px 40px -30px rgba(26, 26, 26, 0.35);
+}
+
+@media (min-width: 768px) {
+  .constraint-card {
+    padding: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .constraint-card { transition-duration: 0.01ms; }
+  .constraint-card:hover { transform: none; }
 }

@@ -14,6 +14,13 @@ export type CaseStudy = {
   timeline: string;
   hero: CaseStudyImage;
   overview: string[];
+  /**
+   * Optional narrative paragraph about what the author personally did on the
+   * project. Rendered under its own labelled row ("Il mio ruolo" / "My role")
+   * when present, so the "what the project is" and "what I did" halves stay
+   * distinct instead of stacking inside Overview.
+   */
+  myRole?: string;
   challenge: { intro: string; constraints: string[] };
   process: { title: string; body: string; image: CaseStudyImage }[];
   decisions: { title: string; why: string; tradeoff: string }[];
@@ -213,6 +220,8 @@ export type Dictionary = {
     allProjects: string;
     counter: string;
     role: string;
+    /** Section label for the "what I personally did" paragraph. */
+    myRole: string;
     type: string;
     year: string;
     category: string;
