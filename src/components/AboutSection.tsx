@@ -2,39 +2,52 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
+import ArrowLabel from "@/components/ArrowLabel";
 import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Spacing of the words along the scrubbed timeline, in timeline seconds: each
+// word lights over WORD_LENGTH, starting WORD_STEP after the previous one.
+const WORD_STEP = 0.35;
+const WORD_LENGTH = 0.5;
 
 export default function AboutSection() {
   const { t } = useI18n();
   const sectionRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLParagraphElement>(null);
+  const factsRef = useRef<HTMLDivElement>(null);
 
   // One span per word. Words, not characters: a screen reader still reads the
-  // bio as a sentence, and the DOM stays in the dozens of nodes.
-  const words = t.about.bio.split(/\s+/);
+  // bio as a sentence, and the DOM stays in the dozens of nodes. Words that
+  // belong to a highlight phrase are marked, with trailing punctuation kept
+  // outside the highlight block.
+  const words = useMemo(() => {
+    const keys = new Set(t.about.highlights.flatMap((h) => h.split(/\s+/)));
+    return t.about.bio.split(/\s+/).map((raw) => {
+      const [, core = raw, tail = ""] = raw.match(/^(.*?)([.,:;]?)$/) ?? [];
+      return { raw, core, tail, highlight: keys.has(core) };
+    });
+  }, [t]);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // No scrubbing for anyone who asked for less motion: the text is simply
-      // there, at full strength. The CSS resting state is faint, so it has to
-      // be cleared here rather than left alone.
-      gsap.set(copyRef.current?.querySelectorAll("span") ?? [], { opacity: 1 });
-      return;
-    }
+    const copy = copyRef.current;
+    if (!copy) return;
+    const spans = Array.from(copy.children) as HTMLElement[];
 
     const ctx = gsap.context(() => {
-      const spans = copyRef.current?.querySelectorAll("span");
-      if (!spans || spans.length === 0) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        // No scrubbing for anyone who asked for less motion: the text is simply
+        // there, highlights included. The CSS resting state is faint, so it has
+        // to be cleared here rather than left alone.
+        gsap.set(spans, { opacity: 1 });
+        gsap.set(copy.querySelectorAll(".about-kw-bg"), { scaleX: 1 });
+        gsap.set(copy.querySelectorAll(".about-kw"), { color: "#1a1a1a" });
+        return;
+      }
 
-      gsap.to(spans, {
-        opacity: 1,
-        ease: "none",
-        // `stagger` under a scrub is what spreads the words across the scroll:
-        // each one lights as the fraction of the range it owns goes by.
-        stagger: 0.35,
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 78%",
@@ -42,10 +55,52 @@ export default function AboutSection() {
           scrub: 0.4,
         },
       });
+
+      spans.forEach((span, i) => {
+        const at = i * WORD_STEP;
+        tl.to(span, { opacity: 1, duration: WORD_LENGTH, ease: "none" }, at);
+
+        // A key word, once lit, is covered by a cream block drawn from the
+        // left, and its ink flips to dark just as the block passes under it.
+        const key = span.querySelector<HTMLElement>(".about-kw");
+        if (key) {
+          tl.to(key.firstElementChild, { scaleX: 1, duration: WORD_LENGTH, ease: "none" }, at + 0.2);
+          tl.to(key, { color: "#1a1a1a", duration: 0.15, ease: "none" }, at + 0.45);
+        }
+      });
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [t]);
+  }, [words]);
+
+  // The facts arrive as a colophon: the rule above them draws from the left,
+  // then each fact rises in turn.
+  useEffect(() => {
+    const facts = factsRef.current;
+    if (!facts || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap
+        .timeline({ scrollTrigger: { trigger: facts, start: "top 88%" } })
+        .fromTo(".about-facts-rule", { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "power4.inOut" })
+        .fromTo(
+          ".about-fact",
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.07, ease: "power3.out" },
+          0.45,
+        );
+    }, facts);
+
+    return () => ctx.revert();
+  }, []);
+
+  const facts = [
+    { label: t.about.facts.location, value: t.about.facts.locationValue },
+    { label: t.about.facts.university, value: t.about.facts.universityValue },
+    { label: t.about.facts.languages, value: t.about.facts.languagesValue },
+    { label: t.about.facts.status, value: t.about.facts.statusValue, live: true },
+    { label: t.about.facts.cv, value: t.about.facts.cvValue, href: t.cvUrl },
+  ];
 
   return (
     <div className="bg-[#1a1a1a] w-full">
@@ -78,8 +133,20 @@ export default function AboutSection() {
             }}
           >
             {words.map((word, i) => (
-              <Fragment key={`${word}-${i}`}>
-                <span>{word}</span>
+              <Fragment key={`${word.raw}-${i}`}>
+                <span>
+                  {word.highlight ? (
+                    <>
+                      <span className="about-kw">
+                        <span className="about-kw-bg" aria-hidden="true" />
+                        {word.core}
+                      </span>
+                      {word.tail}
+                    </>
+                  ) : (
+                    word.raw
+                  )}
+                </span>
                 {i < words.length - 1 ? " " : ""}
               </Fragment>
             ))}
@@ -88,51 +155,40 @@ export default function AboutSection() {
           {/* The facts read as a colophon under the statement, so they get a
               rule of their own rather than sitting loose under the type. */}
           <div
+            ref={factsRef}
             className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5"
-            style={{
-              marginTop: "3.5rem",
-              paddingTop: "2rem",
-              borderTop:
-                "1px solid color-mix(in srgb, #f5f3ef 12%, transparent)",
-            }}
+            style={{ position: "relative", marginTop: "3.5rem", paddingTop: "2rem" }}
           >
-            {[
-              {
-                label: t.about.facts.location,
-                value: t.about.facts.locationValue,
-              },
-              {
-                label: t.about.facts.university,
-                value: t.about.facts.universityValue,
-              },
-              {
-                label: t.about.facts.languages,
-                value: t.about.facts.languagesValue,
-              },
-              {
-                label: t.about.facts.status,
-                value: t.about.facts.statusValue,
-              },
-              {
-                label: t.about.facts.cv,
-                value: t.about.facts.cvValue,
-                href: t.cvUrl,
-              },
-            ].map(({ label, value, href }) => (
-              <div key={label}>
+            <i
+              aria-hidden
+              className="about-facts-rule"
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                height: "1px",
+                background: "color-mix(in srgb, #f5f3ef 12%, transparent)",
+                transformOrigin: "left",
+              }}
+            />
+            {facts.map(({ label, value, href, live }) => (
+              <div key={label} className="about-fact">
                 <p className="label mb-1">{label}</p>
                 {href ? (
                   <a
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-cream hover:text-taupe transition-colors"
-                    style={{ textDecoration: "none" }}
+                    className="link-underline text-sm font-medium text-cream hover:text-taupe transition-colors"
                   >
-                    {value}
+                    <ArrowLabel text={value} />
                   </a>
                 ) : (
-                  <p className="text-sm font-medium text-cream">{value}</p>
+                  <p className="text-sm font-medium text-cream">
+                    {live && <span className="status-dot" aria-hidden="true" />}
+                    {value}
+                  </p>
                 )}
               </div>
             ))}

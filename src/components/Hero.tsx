@@ -1,11 +1,14 @@
 "use client";
 
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useI18n } from "@/i18n/provider";
 import { useIntroDone } from "./introSignal";
 import type { CSSProperties } from "react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /* The two headline colours are not the colours you see. The type sits on top of
    the mark in `mix-blend-mode: difference`, which subtracts it from whatever is
@@ -23,6 +26,8 @@ export default function Hero() {
   const line1Ref = useRef<HTMLSpanElement>(null);
   const line2Ref = useRef<HTMLSpanElement>(null);
   const metaRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const shadeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // The entrance is tied to the intro, not to a fixed delay: when the intro
@@ -63,12 +68,52 @@ export default function Hero() {
     return () => ctx.revert();
   }, [introDone]);
 
+  // On the way out the hero stays where it is — pinned, not scrolled — and
+  // recedes: the mark and the headline shrink a little and the whole hero
+  // dims, while the About section slides up over it. The pin holds for
+  // exactly one hero-height of scroll, which is when About has covered it.
+  // It starts at "bottom bottom" so a hero taller than the screen is scrolled
+  // to its end before it pins.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "bottom bottom",
+            end: () => `+=${sectionRef.current?.offsetHeight ?? 0}`,
+            pin: true,
+            pinSpacing: false,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
+        // The mark and the headline are scaled one by one, never through a
+        // shared wrapper: a transform on a parent would start a new stacking
+        // context, and the headline's difference blend would then see only
+        // the mark behind it instead of the cream — the text would stop
+        // flipping colour where it crosses the mark. Both are centred on the
+        // same point, so scaling each about its own centre reads as one.
+        .fromTo([markRef.current, titleRef.current], { scale: 1 }, { scale: 0.86, ease: "none" }, 0)
+        .fromTo(shadeRef.current, { opacity: 0 }, { opacity: 0.6, ease: "none" }, 0);
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
       ref={sectionRef}
       // `isolate` keeps the difference blend inside the hero: without it the
       // headline would blend with the header and the page behind it too.
       className="bg-cream min-h-screen flex flex-col px-8 md:px-16 relative isolate"
+      // Above the footer, which waits sticky at the bottom of the viewport from
+      // the first screen on (see `curtainAbove` in Footer). Same level as the
+      // sheet that follows, which comes later in the page and so still slides
+      // over the pinned hero.
+      style={{ zIndex: 1 }}
     >
       <div className="h-28" />
 
@@ -99,6 +144,7 @@ export default function Hero() {
             elements are <span>s so the h1 contains phrasing content only,
             which is what the spec requires. */}
         <h1
+          ref={titleRef}
           aria-label={`Luisa Cerin Ogbeiwi — ${t.hero.line1} ${t.hero.line2}`}
           className="relative flex flex-col gap-[0.2rem] m-0"
           style={{ mixBlendMode: "difference" }}
@@ -170,6 +216,13 @@ export default function Hero() {
           </p>
         </div>
       </div>
+
+      <div
+        ref={shadeRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[#1a1a1a]"
+        style={{ opacity: 0, zIndex: 10 }}
+      />
     </section>
   );
 }

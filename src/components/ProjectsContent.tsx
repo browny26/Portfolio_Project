@@ -1,11 +1,13 @@
 "use client";
 
-import Footer from "@/components/Footer";
+import ArrowLabel from "@/components/ArrowLabel";
+import Footer, { curtainAbove } from "@/components/Footer";
+import { TransitionLink } from "@/components/PageTransition";
+import { useCurtainOpen } from "@/components/pageCurtain";
 import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -15,8 +17,11 @@ export default function ProjectsContent() {
   const projects = t.projects;
   const headingRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  // Arriving through the page curtain, the entrance waits for it to lift.
+  const curtainOpen = useCurtainOpen();
 
   useEffect(() => {
+    if (!curtainOpen) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         headingRef.current?.querySelectorAll(".reveal-line") ?? [],
@@ -46,11 +51,12 @@ export default function ProjectsContent() {
       });
     });
     return () => ctx.revert();
-  }, []);
+  }, [curtainOpen]);
 
   return (
     <div className="bg-cream min-h-screen">
       <main>
+        <div style={curtainAbove}>
         {/* Page heading */}
         <div className="bg-[#1a1a1a] w-full">
           <div
@@ -144,12 +150,13 @@ export default function ProjectsContent() {
 
                   <div className="flex flex-wrap gap-3">
                     {project.caseStudy && (
-                      <Link
+                      <TransitionLink
                         href={href(`/projects/${project.slug}`)}
+                        label={`${project.title} · ${t.caseStudy.counter}`}
                         className="btn btn-filled text-[0.7rem] py-1 px-4"
                       >
-                        {t.projectsPage.caseStudy}
-                      </Link>
+                        <ArrowLabel text={t.projectsPage.caseStudy} />
+                      </TransitionLink>
                     )}
                     {project.links.live && (
                       <a
@@ -158,7 +165,7 @@ export default function ProjectsContent() {
                         rel="noopener noreferrer"
                         className="btn text-[0.7rem] py-[0.45rem] px-4"
                       >
-                        {t.projectsPage.viewSite}
+                        <ArrowLabel text={t.projectsPage.viewSite} />
                       </a>
                     )}
                     {project.links.repo && (
@@ -168,7 +175,7 @@ export default function ProjectsContent() {
                         rel="noopener noreferrer"
                         className="btn text-[0.7rem] py-[0.45rem] px-4"
                       >
-                        {t.projectsPage.github}
+                        <ArrowLabel text={t.projectsPage.github} />
                       </a>
                     )}
                   </div>
@@ -176,6 +183,7 @@ export default function ProjectsContent() {
               </article>
             ))}
           </div>
+        </div>
         </div>
 
         <Footer />

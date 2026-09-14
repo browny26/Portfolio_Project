@@ -1,6 +1,7 @@
 "use client";
 
-import Footer from "@/components/Footer";
+import ArrowLabel from "@/components/ArrowLabel";
+import Footer, { curtainAbove } from "@/components/Footer";
 import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import Image from "next/image";
@@ -40,6 +41,7 @@ export default function NotFoundContent() {
   return (
     <div className="bg-cream min-h-screen">
       <main>
+        <div style={curtainAbove}>
         <section
           ref={sectionRef}
           className="section relative flex min-h-screen flex-col justify-center"
@@ -104,7 +106,7 @@ export default function NotFoundContent() {
               style={{ opacity: 0, marginTop: "2.5rem" }}
             >
               <Link href={href("/")} className="btn btn-filled">
-                {t.notFound.home}
+                <ArrowLabel text={t.notFound.home} />
               </Link>
               <Link href={href("/projects")} className="btn">
                 {t.notFound.projects}
@@ -112,6 +114,8 @@ export default function NotFoundContent() {
             </div>
           </div>
         </section>
+
+        </div>
 
         <Footer />
       </main>

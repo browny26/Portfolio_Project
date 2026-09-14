@@ -1,6 +1,9 @@
 "use client";
 
-import Footer from "@/components/Footer";
+import ArrowLabel from "@/components/ArrowLabel";
+import Footer, { curtainAbove } from "@/components/Footer";
+import { TransitionLink } from "@/components/PageTransition";
+import { useCurtainOpen } from "@/components/pageCurtain";
 import { useI18n } from "@/i18n/provider";
 import type { CaseStudy as CaseStudyData, Project } from "@/i18n/types";
 import gsap from "gsap";
@@ -254,11 +257,128 @@ function Figure({
   );
 }
 
+/**
+ * The process as a reading column next to one screenshot that stays put. The
+ * step being read is at full strength and the others recede; when a new step
+ * reaches the middle of the screen its screenshot wipes in over the previous
+ * one, from below going down the page and from above coming back up.
+ */
+function ProcessSteps({ steps }: { steps: CaseStudyData["process"] }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const pad = (n: number) => String(n).padStart(2, "0");
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const articles = Array.from(root.querySelectorAll<HTMLElement>(".process-step"));
+    const shots = Array.from(root.querySelectorAll<HTMLElement>(".process-shot"));
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const setCount = (i: number) => {
+      if (countRef.current) countRef.current.textContent = `${pad(i + 1)} / ${pad(steps.length)}`;
+    };
+    let active = 0;
+    setCount(0);
+
+    const activate = (i: number) => {
+      if (i === active) return;
+      const previous = active;
+      active = i;
+      articles.forEach((article, j) => article.classList.toggle("is-active", j === i));
+      setCount(i);
+      shots.forEach((shot) => (shot.style.zIndex = "0"));
+      shots[previous].style.zIndex = "1";
+      shots[i].style.zIndex = "2";
+      if (reduced) return;
+      gsap.fromTo(
+        shots[i],
+        {
+          clipPath: i > previous ? "inset(100% 0% 0% 0%)" : "inset(0% 0% 100% 0%)",
+          scale: 1.08,
+        },
+        {
+          clipPath: "inset(0% 0% 0% 0%)",
+          scale: 1,
+          duration: 0.8,
+          ease: "power4.inOut",
+          overwrite: "auto",
+        },
+      );
+    };
+
+    const ctx = gsap.context(() => {
+      articles.forEach((article, i) => {
+        ScrollTrigger.create({
+          trigger: article,
+          start: "top 55%",
+          end: "bottom 55%",
+          onToggle: (self) => {
+            if (self.isActive) activate(i);
+          },
+        });
+      });
+    }, root);
+    return () => ctx.revert();
+  }, [steps]);
+
+  return (
+    <div
+      ref={rootRef}
+      className="grid grid-cols-1 md:grid-cols-[12rem_1fr] gap-4 md:gap-8"
+      style={{ borderTop: rule, paddingTop: "2.5rem", paddingBottom: "3rem" }}
+    >
+      {/* Keeps the steps in the content column, aligned with the rows above. */}
+      <span aria-hidden className="hidden md:block" />
+      <div className="process-split">
+        <div className="process-media">
+          <div
+            className="process-frame"
+            style={{ aspectRatio: steps[0]?.image.aspect ?? "16/10" }}
+          >
+            {steps.map((step, i) => (
+              <div
+                key={step.image.src}
+                className="process-shot"
+                style={{ zIndex: i === 0 ? 2 : 0 }}
+              >
+                <Image
+                  src={step.image.src}
+                  alt={step.image.alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 760px"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+            <span ref={countRef} className="label process-count" aria-hidden />
+          </div>
+        </div>
+        <div>
+          {steps.map((step, i) => (
+            <article
+              key={step.title}
+              className={i === 0 ? "process-step is-active" : "process-step"}
+            >
+              <span className="label">{pad(i + 1)}</span>
+              <h3 className="text-[1.05rem] font-semibold text-[#1a1a1a]">
+                {step.title}
+              </h3>
+              <Body>{step.body}</Body>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CaseStudy({ project, index, next }: Props) {
   const { t, href } = useI18n();
   const rootRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
   const cs = project.caseStudy;
+  // Arriving through the page curtain, the entrance waits for it to lift.
+  const curtainOpen = useCurtainOpen();
 
   const links = [
     isRealLink(project.links.live)
@@ -281,6 +401,7 @@ export default function CaseStudy({ project, index, next }: Props) {
   const galleryPairs = galleryLead ? cs.gallery.slice(1) : cs.gallery;
 
   useEffect(() => {
+    if (!curtainOpen) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         headingRef.current?.querySelectorAll(".reveal-line") ?? [],
@@ -306,6 +427,30 @@ export default function CaseStudy({ project, index, next }: Props) {
           delay: 0.7,
         },
       );
+
+      // Metadata: the rule above it draws from the left, the labels come in
+      // from the left, the values rise out of their own masks, then the stack.
+      gsap
+        .timeline({ delay: 0.6 })
+        .fromTo(".cs-meta-rule", { scaleX: 0 }, { scaleX: 1, duration: 1, ease: "power4.inOut" })
+        .fromTo(
+          ".cs-meta-label",
+          { opacity: 0, x: -14 },
+          { opacity: 1, x: 0, duration: 0.6, stagger: 0.07, ease: "power3.out" },
+          0.4,
+        )
+        .fromTo(
+          ".cs-meta-value",
+          { y: "110%" },
+          { y: "0%", duration: 0.8, stagger: 0.07, ease: "power3.out" },
+          0.5,
+        )
+        .fromTo(
+          ".cs-tag",
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5, stagger: 0.03, ease: "none" },
+          0.9,
+        );
 
       // Cards stagger in per grid. They carry a backdrop-filter, so the
       // transform is cleared once the reveal is done: leaving one on the
@@ -344,11 +489,12 @@ export default function CaseStudy({ project, index, next }: Props) {
       });
     }, rootRef);
     return () => ctx.revert();
-  }, []);
+  }, [curtainOpen]);
 
   return (
     <div ref={rootRef} className="bg-cream min-h-screen">
       <main>
+        <div style={curtainAbove}>
         {/* Hero */}
         <div className="bg-[#1a1a1a] w-full">
           <div
@@ -364,8 +510,7 @@ export default function CaseStudy({ project, index, next }: Props) {
             >
               <Link
                 href={href("/projects")}
-                className="label hover:text-cream transition-colors"
-                style={{ textDecoration: "none" }}
+                className="label link-underline hover:text-cream transition-colors"
               >
                 {t.caseStudy.allProjects}
               </Link>
@@ -392,35 +537,60 @@ export default function CaseStudy({ project, index, next }: Props) {
             </div>
 
             <div
-              className="hero-meta grid grid-cols-2 md:grid-cols-4 gap-6"
+              className="grid grid-cols-2 md:grid-cols-4 gap-6"
               style={{
-                opacity: 0,
+                position: "relative",
                 marginTop: "3rem",
                 paddingTop: "1.5rem",
-                borderTop: "1px solid rgba(245,243,239,0.1)",
               }}
             >
+              <i
+                aria-hidden
+                className="cs-meta-rule"
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: "1px",
+                  background: "rgba(245,243,239,0.1)",
+                  transformOrigin: "left",
+                  transform: "scaleX(0)",
+                }}
+              />
               {meta.map(({ label, value }) => (
                 <div key={label}>
-                  <p className="label" style={{ marginBottom: "0.35rem" }}>
+                  <p
+                    className="label cs-meta-label"
+                    style={{ marginBottom: "0.35rem", opacity: 0 }}
+                  >
                     {label}
                   </p>
-                  <p
-                    className="text-sm font-medium"
-                    style={{ color: "rgba(245,243,239,0.85)" }}
-                  >
-                    {value}
-                  </p>
+                  <div className="overflow-clip">
+                    <p
+                      className="cs-meta-value text-sm font-medium"
+                      style={{
+                        color: "rgba(245,243,239,0.85)",
+                        transform: "translateY(110%)",
+                      }}
+                    >
+                      {value}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
 
             <div
-              className="hero-meta flex flex-wrap items-center gap-2"
-              style={{ opacity: 0, marginTop: "1.75rem" }}
+              className="flex flex-wrap items-center gap-2"
+              style={{ marginTop: "1.75rem" }}
             >
               {project.tech.map((tech) => (
-                <span key={tech} className="tag tag-inverted">
+                <span
+                  key={tech}
+                  className="tag tag-inverted cs-tag"
+                  style={{ opacity: 0 }}
+                >
                   {tech}
                 </span>
               ))}
@@ -448,7 +618,7 @@ export default function CaseStudy({ project, index, next }: Props) {
                         : { borderColor: "#f5f3ef", color: "#f5f3ef" }
                     }
                   >
-                    {l.label}
+                    <ArrowLabel text={l.label} />
                   </a>
                 ))}
               </div>
@@ -496,7 +666,7 @@ export default function CaseStudy({ project, index, next }: Props) {
                   className="constraint-card"
                   style={{ opacity: 0 }}
                 >
-                  <span className="label" style={{ color: "#c8c4be" }}>
+                  <span className="label constraint-num">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p
@@ -512,17 +682,7 @@ export default function CaseStudy({ project, index, next }: Props) {
 
           {/* Process */}
           <SectionHead label={t.caseStudy.process} title={t.caseStudy.processTitle} />
-          {cs.process.map((step, i) => (
-            <Row key={step.title} label={`0${i + 1}`}>
-              <h3 className="text-[1.05rem] font-semibold text-[#1a1a1a]">
-                {step.title}
-              </h3>
-              <div style={{ marginTop: "0.75rem", marginBottom: "2rem" }}>
-                <Body>{step.body}</Body>
-              </div>
-              <Figure image={step.image} />
-            </Row>
-          ))}
+          <ProcessSteps steps={cs.process} />
 
         </div>
 
@@ -654,8 +814,9 @@ export default function CaseStudy({ project, index, next }: Props) {
           <span className="label block" style={{ marginBottom: "1rem" }}>
             {next ? t.caseStudy.nextProject : t.caseStudy.moreWork}
           </span>
-          <Link
+          <TransitionLink
             href={href(next ? `/projects/${next.slug}` : "/projects")}
+            label={next ? `${next.title} · ${t.caseStudy.counter}` : t.projectsPage.label}
             className="group inline-flex items-baseline gap-4"
             style={{ textDecoration: "none" }}
           >
@@ -671,7 +832,7 @@ export default function CaseStudy({ project, index, next }: Props) {
             >
               →
             </span>
-          </Link>
+          </TransitionLink>
           {next && (
             <Link
               href={href("/projects")}
@@ -681,6 +842,7 @@ export default function CaseStudy({ project, index, next }: Props) {
               {t.projectsPage.label}
             </Link>
           )}
+        </div>
         </div>
 
         <Footer />

@@ -676,6 +676,7 @@ const it: Dictionary = {
 
   about: {
     label: "Chi sono",
+    highlights: ["Gallarate", "LLM", "RAG", "assistenti conversazionali"],
     bio: "Full-stack e AI developer con base a Gallarate. Costruisco esperienze digitali che uniscono un design pensato a codice pulito e scalabile, integrando modelli LLM nei prodotti: assistenti conversazionali, automazioni e funzionalità basate su RAG. Attualmente studio Comunicazione Digitale e Informatica all'Università degli Studi di Milano.",
     facts: {
       location: "Sede",

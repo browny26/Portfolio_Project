@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import { PageTransition } from "@/components/PageTransition";
 import SmoothScroll from "@/components/SmoothScroll";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -63,8 +64,10 @@ export default async function RootLayout({
       <body className="antialiased">
         <I18nProvider lang={lang} dictionary={dictionary}>
           <SmoothScroll>
-            <Header />
-            {children}
+            <PageTransition>
+              <Header />
+              {children}
+            </PageTransition>
           </SmoothScroll>
         </I18nProvider>
       </body>

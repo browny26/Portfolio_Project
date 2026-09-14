@@ -672,6 +672,7 @@ const en: Dictionary = {
 
   about: {
     label: "About me",
+    highlights: ["Gallarate", "LLMs", "RAG-based", "conversational assistants"],
     bio: "Full-stack and AI developer based in Gallarate, Italy. I build digital experiences that combine thoughtful design with clean, scalable code, bringing LLMs into products: conversational assistants, automations and RAG-based features. Currently studying Digital Communication & Computer Science at the University of Milan.",
     facts: {
       location: "Location",

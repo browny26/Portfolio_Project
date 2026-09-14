@@ -165,15 +165,68 @@ body {
    fotogramma di testo pieno prima che ScrollTrigger prenda il controllo.
    Usato dall'About della home e dai paragrafi Overview / My role dei case
    study — stesso motore, dimensione tipografica diversa per contesto. */
-.about-copy span,
+.about-copy > span,
 .reveal-copy span {
   opacity: 0.18;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-copy span,
+  .about-copy > span,
   .reveal-copy span {
     opacity: 1;
+  }
+}
+
+/* Parole chiave della bio: un blocco cream le copre quando lo scroll le
+   raggiunge, e il testo passa a inchiostro per restare leggibile sopra.
+   Il blocco sta dietro al testo grazie a `isolation`, che tiene il suo
+   z-index negativo dentro la parola. */
+.about-kw {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+.about-kw-bg {
+  position: absolute;
+  inset: 0.08em -0.14em 0.02em;
+  background: #f5f3ef;
+  transform: scaleX(0);
+  transform-origin: left;
+  z-index: -1;
+}
+
+/* Punto di stato accanto a «Disponibile»: un segnale, non una decorazione. */
+.status-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9cc59f;
+  margin-right: 0.5rem;
+  vertical-align: 0.1em;
+}
+.status-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: status-ping 1.8s cubic-bezier(0.33, 1, 0.68, 1) infinite;
+}
+@keyframes status-ping {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-dot::after {
+    animation: none;
   }
 }
 
@@ -401,4 +454,185 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .constraint-card { transition-duration: 0.01ms; }
   .constraint-card:hover { transform: none; }
+}
+
+/* ─── Freccia che cambia ───────────────────────────────────────────
+   Ogni etichetta che finisce con → o ↗ passa da <ArrowLabel>: al passaggio
+   del mouse la freccia esce e ne rientra una uguale dal lato opposto. La ↗
+   esce in diagonale, verso dove punta. Il trigger è l'intero link o bottone,
+   non la freccia, così il gesto parte appena si entra nel controllo. */
+.arrow-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+}
+.arrow-swap {
+  display: inline-grid;
+  overflow: hidden;
+  width: 1.05em;
+  line-height: 1.15;
+}
+.arrow-swap > span {
+  grid-area: 1 / 1;
+  text-align: center;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.arrow-swap > span + span {
+  transform: translateX(-130%);
+}
+.arrow-swap-up > span + span {
+  transform: translate(-130%, 130%);
+}
+:is(a, button):is(:hover, :focus-visible) .arrow-swap > span:first-child {
+  transform: translateX(130%);
+}
+:is(a, button):is(:hover, :focus-visible) .arrow-swap-up > span:first-child {
+  transform: translate(130%, -130%);
+}
+:is(a, button):is(:hover, :focus-visible) .arrow-swap > span + span {
+  transform: none;
+}
+
+/* Sottolineatura che entra da sinistra ed esce verso destra. */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.link-underline:is(:hover, :focus-visible)::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow-swap > span,
+  .link-underline::after {
+    transition-duration: 0.01ms;
+  }
+}
+
+/* ─── Constraint card · linea sotto ─── */
+.constraint-card {
+  position: relative;
+}
+.constraint-card::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  height: 2px;
+  background: #1a1a1a;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.constraint-card:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.constraint-num {
+  display: inline-block;
+  color: #c8c4be;
+  transition:
+    color 0.4s cubic-bezier(0.76, 0, 0.24, 1),
+    transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.constraint-card:hover .constraint-num {
+  color: #1a1a1a;
+  transform: translateX(6px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .constraint-card::after,
+  .constraint-num {
+    transition-duration: 0.01ms;
+  }
+  .constraint-card:hover .constraint-num {
+    transform: none;
+  }
+}
+
+/* ─── Processo · immagine fissa che cambia ─────────────────────────
+   Da desktop il testo dei passi scorre a sinistra e lo screenshot resta
+   fermo a destra. Sotto i 1024px la stessa cornice si ferma in alto, sotto
+   l'header, e i passi scorrono sotto di lei. */
+.process-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+.process-media {
+  position: sticky;
+  top: 6rem;
+  z-index: 2;
+  background: #f5f3ef;
+  padding-bottom: 1rem;
+  align-self: start;
+}
+.process-frame {
+  position: relative;
+  overflow: hidden;
+  background: #e8e4dd;
+}
+.process-shot {
+  position: absolute;
+  inset: 0;
+}
+.process-count {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  z-index: 5;
+  background: #1a1a1a;
+  color: #f5f3ef;
+  padding: 0.3rem 0.5rem;
+}
+.process-step {
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  opacity: 0.3;
+  transition: opacity 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.process-step.is-active {
+  opacity: 1;
+}
+@media (min-width: 1024px) {
+  .process-split {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 3rem;
+  }
+  .process-media {
+    order: 2;
+    position: relative;
+    top: auto;
+    align-self: stretch;
+    background: transparent;
+    padding-bottom: 0;
+  }
+  .process-frame {
+    position: sticky;
+    top: 20vh;
+  }
+  .process-step {
+    min-height: 72vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .process-step {
+    transition-duration: 0.01ms;
+  }
 }

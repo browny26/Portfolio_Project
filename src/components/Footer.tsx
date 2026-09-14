@@ -3,33 +3,94 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import ArrowLabel from "@/components/ArrowLabel";
 import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * Style for the block that sits directly above <Footer />.
+ *
+ * The footer waits, sticky, at the bottom of the viewport underneath the page,
+ * and the page lifts off it like a curtain. For that the content before it has
+ * to be positioned above it and opaque: a sticky element is positioned, a plain
+ * block is not, so without this the footer would paint over the page instead.
+ */
+export const curtainAbove: CSSProperties = {
+  position: "relative",
+  zIndex: 1,
+  background: "#f5f3ef",
+  boxShadow: "0 40px 60px -40px rgba(0, 0, 0, 0.55)",
+};
+
 export default function Footer() {
   const { t, href } = useI18n();
   const ref = useRef<HTMLElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  // The curtain only works when the whole footer fits on screen: a taller one
+  // would keep its top part hidden under the page for good.
+  const [fits, setFits] = useState(false);
 
   useEffect(() => {
+    const footer = ref.current;
+    if (!footer) return;
+    const measure = () => setFits(footer.offsetHeight <= window.innerHeight);
+    const observer = new ResizeObserver(measure);
+    observer.observe(footer);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  useEffect(() => {
+    const footer = ref.current;
+    if (!footer) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const ctx = gsap.context(() => {
-      const lines = ref.current?.querySelectorAll(".reveal-line");
-      if (lines) {
+      const lines = footer.querySelectorAll(".reveal-line");
+      const meta = footer.querySelectorAll(".footer-meta");
+
+      if (fits && !reduced) {
+        // Everything is already in place under the page. As the page lifts
+        // off, the content settles down from slightly higher and brightens —
+        // over exactly the last footer-height of scroll.
+        gsap.set(meta, { opacity: 1 });
         gsap.fromTo(
-          lines,
-          { y: "110%" },
+          innerRef.current,
+          { yPercent: -30, opacity: 0.35 },
           {
-            y: "0%",
-            duration: 0.85,
-            stagger: 0.08,
-            ease: "power3.out",
-            scrollTrigger: { trigger: ref.current, start: "top 80%" },
+            yPercent: 0,
+            opacity: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: document.documentElement,
+              start: () => `bottom-=${footer.offsetHeight} bottom`,
+              end: "bottom bottom",
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
           },
         );
+        return;
       }
+
       gsap.fromTo(
-        ref.current?.querySelectorAll(".footer-meta") ?? [],
+        lines,
+        { y: "110%" },
+        {
+          y: "0%",
+          duration: 0.85,
+          stagger: 0.08,
+          ease: "power3.out",
+          scrollTrigger: { trigger: footer, start: "top 80%" },
+        },
+      );
+      gsap.fromTo(
+        meta,
         { opacity: 0, y: 20 },
         {
           opacity: 1,
@@ -37,12 +98,12 @@ export default function Footer() {
           duration: 0.7,
           stagger: 0.08,
           ease: "power2.out",
-          scrollTrigger: { trigger: ref.current, start: "top 75%" },
+          scrollTrigger: { trigger: footer, start: "top 75%" },
         },
       );
-    }, ref);
+    }, footer);
     return () => ctx.revert();
-  }, []);
+  }, [fits]);
 
   return (
     <footer
@@ -50,9 +111,11 @@ export default function Footer() {
       className="bg-[#1A1A1A]"
       style={{
         borderTop: "1px solid color-mix(in srgb, #1a1a1a 12%, transparent)",
+        overflow: "clip",
+        ...(fits ? { position: "sticky", bottom: 0, zIndex: 0 } : null),
       }}
     >
-      <div className="section">
+      <div ref={innerRef} className="section">
         <div className="mb-14">
           <div className="overflow-clip">
             <div
@@ -79,7 +142,7 @@ export default function Footer() {
                 href={href("/contact")}
                 className="btn btn-filled-inverted inline-flex mt-6"
               >
-                {t.footer.cta}
+                <ArrowLabel text={t.footer.cta} />
               </Link>
             </div>
           </div>
@@ -114,7 +177,7 @@ export default function Footer() {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="label hover:text-cream transition-colors"
+                className="label link-underline hover:text-cream transition-colors"
               >
                 {label}
               </a>

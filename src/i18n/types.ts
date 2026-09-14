@@ -145,6 +145,8 @@ export type Dictionary = {
   about: {
     label: string;
     bio: string;
+    /** Phrases of the bio that get highlighted as the reader scrolls past them. */
+    highlights: string[];
     facts: {
       location: string;
       locationValue: string;

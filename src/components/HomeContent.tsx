@@ -7,7 +7,7 @@ import ProjectsBanner from "@/components/ProjectsBanner";
 import ServicesSection from "@/components/ServicesSection";
 import SkillsSection from "@/components/SkillsSection";
 import ExperienceSection from "@/components/ExperienceSection";
-import Footer from "@/components/Footer";
+import Footer, { curtainAbove } from "@/components/Footer";
 
 export default function HomeContent() {
   return (
@@ -17,11 +17,16 @@ export default function HomeContent() {
       <Intro />
       <main className="bg-[#f5f3ef] min-h-screen">
         <Hero />
-        <AboutSection />
-        <ProjectsBanner />
-        <ServicesSection />
-        <SkillsSection />
-        <ExperienceSection />
+        {/* Everything between the hero and the footer is one opaque sheet that
+            slides over the pinned hero, and is lifted off the footer at the
+            end of the page. */}
+        <div style={curtainAbove}>
+          <AboutSection />
+          <ProjectsBanner />
+          <ServicesSection />
+          <SkillsSection />
+          <ExperienceSection />
+        </div>
         <Footer />
       </main>
     </>

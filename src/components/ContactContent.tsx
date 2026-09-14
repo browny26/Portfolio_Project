@@ -1,6 +1,7 @@
 "use client";
 
-import Footer from "@/components/Footer";
+import ArrowLabel from "@/components/ArrowLabel";
+import Footer, { curtainAbove } from "@/components/Footer";
 import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
@@ -64,6 +65,7 @@ export default function ContactContent() {
   return (
     <div className="bg-cream min-h-screen">
       <main>
+        <div style={curtainAbove}>
         {/* Heading */}
         <div className="bg-[#1a1a1a] w-full">
           <div
@@ -275,12 +277,14 @@ export default function ContactContent() {
                     disabled={status === "sending"}
                     className="btn btn-filled self-start"
                   >
-                    {status === "sending" ? t.contactPage.sending : t.contactPage.send}
+                    {status === "sending" ? t.contactPage.sending : <ArrowLabel text={t.contactPage.send} />}
                   </button>
                 </form>
               )}
             </div>
           </div>
+        </div>
+
         </div>
 
         <Footer />
