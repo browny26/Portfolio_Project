@@ -5,6 +5,7 @@ import Footer, { curtainAbove } from "@/components/Footer";
 import { TransitionLink } from "@/components/PageTransition";
 import { useCurtainOpen } from "@/components/pageCurtain";
 import { useI18n } from "@/i18n/provider";
+import { projectLinks } from "@/i18n/projectLinks";
 import type { CaseStudy as CaseStudyData, Project } from "@/i18n/types";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -29,10 +30,6 @@ const imageSizes = "(max-width: 768px) 100vw, 1376px";
 const darkRule = "1px solid rgba(245, 243, 239, 0.12)";
 const darkBodyColor = "rgba(245, 243, 239, 0.72)";
 const darkLabelColor = "rgba(245, 243, 239, 0.45)";
-
-function isRealLink(href?: string) {
-  return Boolean(href && href !== "#");
-}
 
 function Row({
   label,
@@ -380,14 +377,17 @@ export default function CaseStudy({ project, index, next }: Props) {
   // Arriving through the page curtain, the entrance waits for it to lift.
   const curtainOpen = useCurtainOpen();
 
+  const { live, repos } = projectLinks(project);
   const links = [
-    isRealLink(project.links.live)
-      ? { label: t.caseStudy.viewSite, href: project.links.live!, filled: true }
-      : null,
-    isRealLink(project.links.repo)
-      ? { label: t.caseStudy.github, href: project.links.repo!, filled: false }
-      : null,
-  ].filter((l): l is NonNullable<typeof l> => l !== null);
+    ...(live ? [{ label: t.caseStudy.viewSite, href: live, filled: true }] : []),
+    ...repos.map((repo) => ({
+      label: repo.label
+        ? t.caseStudy.githubPart.replace("{part}", repo.label)
+        : t.caseStudy.github,
+      href: repo.url,
+      filled: false,
+    })),
+  ];
 
   const meta = [
     { label: t.caseStudy.role, value: cs.role },

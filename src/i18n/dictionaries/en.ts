@@ -394,7 +394,7 @@ const projects: Project[] = [
       "Vercel",
     ],
     image: "/imgs/newmann-landing.webp",
-    links: { live: "#" },
+    links: { live: "https://newmann.ai" },
     color: "#0f766e",
     caseStudy: newmannCaseStudy,
   },
@@ -420,7 +420,14 @@ const projects: Project[] = [
       "Docker",
     ],
     image: "/imgs/mockupAtlas.jpeg",
-    links: { live: "#", repo: "#" },
+    links: {
+      live: "https://atlas-works.vercel.app/",
+      repos: [
+        { label: "Frontend", url: "https://github.com/browny26/atlas-frontend" },
+        { label: "Backend", url: "https://github.com/browny26/atlas-backend" },
+        { label: "Legacy AI service", url: "https://github.com/browny26/atlas-ai_service" },
+      ],
+    },
     color: "#4f46e5",
     caseStudy: atlasCaseStudy,
   },
@@ -444,7 +451,7 @@ const projects: Project[] = [
       "Aruba Linux",
     ],
     image: "/imgs/mockupSacithLab.svg",
-    links: { live: "#" },
+    links: { live: "https://sacith-lab.com" },
     color: "#d97706",
     caseStudy: sacithLabCaseStudy,
   },
@@ -458,7 +465,7 @@ const projects: Project[] = [
       "Modern bilingual product catalog for Italian air-massage systems company 'Sacith S.r.l.'. Full SEO optimization with Google Analytics integration.",
     tech: ["PHP", "MySQL", "JavaScript", "Tailwind CSS"],
     image: "/imgs/mockupSacith.png",
-    links: { live: "#" },
+    links: { live: "https://sacith.com" },
     color: "#059669",
   },
   {
@@ -471,7 +478,7 @@ const projects: Project[] = [
       "Architecture firm website where motion is the core experience. Seamless GSAP animations create an immersive exploration.",
     tech: ["HTML", "CSS", "JavaScript", "GSAP"],
     image: "/imgs/mockupNovaVice.png",
-    links: { live: "#", repo: "#" },
+    links: { live: "#", repos: [{ url: "https://github.com/browny26/NovaVice" }] },
     color: "#7c3aed",
   },
   {
@@ -484,7 +491,7 @@ const projects: Project[] = [
       "Immersive universe with rich product array in interconnected overlay experience. Advanced GSAP animations and video integration.",
     tech: ["React", "GSAP", "Video"],
     image: "/imgs/mockupAwwwards.png",
-    links: { live: "#", repo: "#" },
+    links: { live: "#" },
     color: "#2563eb",
   },
 ];
@@ -831,6 +838,7 @@ const en: Dictionary = {
     caseStudy: "Case study →",
     viewSite: "View site ↗",
     github: "GitHub →",
+    githubPart: "GitHub · {part} →",
   },
 
   contactPage: {
@@ -893,6 +901,7 @@ const en: Dictionary = {
     category: "Category",
     viewSite: "View site ↗",
     github: "GitHub →",
+    githubPart: "GitHub · {part} →",
     overview: "Overview",
     challenge: "The challenge",
     process: "Process",

@@ -1,5 +1,6 @@
 import { getDictionary } from "@/i18n/dictionaries";
-import { realLink } from "@/i18n/structuredData";
+import { projectLinks } from "@/i18n/projectLinks";
+import type { Project } from "@/i18n/types";
 import { owner, siteUrl } from "@/site";
 
 /**
@@ -10,6 +11,14 @@ import { owner, siteUrl } from "@/site";
 export const dynamic = "force-static";
 
 const abs = (path: string) => new URL(path, siteUrl).toString();
+
+/** " Code: [Frontend](…), [Backend](…)." for projects with public repositories. */
+function code(project: Project) {
+  const { repos } = projectLinks(project);
+  if (!repos.length) return "";
+  const list = repos.map((r) => (r.label ? `[${r.label}](${r.url})` : r.url));
+  return ` Code: ${list.join(", ")}.`;
+}
 
 export async function GET() {
   const t = await getDictionary("en");
@@ -52,17 +61,18 @@ export async function GET() {
     ]),
     "## Case studies",
     "",
-    ...caseStudies.map(
-      (p) =>
-        `- [${p.title}](${abs(`/en/projects/${p.slug}`)}): ${p.caseStudy?.tagline} Role: ${p.caseStudy?.role}. Stack: ${p.tech.join(", ")}.`,
-    ),
+    ...caseStudies.map((p) => {
+      const { live } = projectLinks(p);
+      const site = live ? ` Live: ${live}.` : "";
+      return `- [${p.title}](${abs(`/en/projects/${p.slug}`)}): ${p.caseStudy?.tagline} Role: ${p.caseStudy?.role}. Stack: ${p.tech.join(", ")}.${site}${code(p)}`;
+    }),
     "",
     "## Other projects",
     "",
     ...otherProjects.map((p) => {
-      const link = realLink(p.links.live) ?? realLink(p.links.repo);
-      const name = link ? `[${p.title}](${link})` : p.title;
-      return `- ${name} (${p.category}, ${p.year}): ${p.description}`;
+      const { live } = projectLinks(p);
+      const name = live ? `[${p.title}](${live})` : p.title;
+      return `- ${name} (${p.category}, ${p.year}): ${p.description}${code(p)}`;
     }),
     "",
     "## Skills",

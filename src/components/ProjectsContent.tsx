@@ -4,6 +4,7 @@ import ArrowLabel from "@/components/ArrowLabel";
 import Footer, { curtainAbove } from "@/components/Footer";
 import { TransitionLink } from "@/components/PageTransition";
 import { useCurtainOpen } from "@/components/pageCurtain";
+import { projectLinks } from "@/i18n/projectLinks";
 import { useI18n } from "@/i18n/provider";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -89,99 +90,109 @@ export default function ProjectsContent() {
         {/* Projects grid */}
         <div ref={gridRef} className="section pt-16">
           <div className="grid grid-cols-1 gap-x-6 gap-y-14">
-            {projects.map((project) => (
-              <article
-                key={project.slug}
-                className="proj-card group opacity-0 flex flex-col gap-6 md:flex-row md:gap-20"
-              >
-                {/* Image */}
-                <div
-                  className="relative overflow-hidden bg-light w-full md:w-1/2"
-                  style={{ aspectRatio: "16/9" }}
+            {projects.map((project) => {
+              const { live, repos } = projectLinks(project);
+              return (
+                <article
+                  key={project.slug}
+                  className="proj-card group opacity-0 flex flex-col gap-6 md:flex-row md:gap-20"
                 >
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover aspect-video transition-transform duration-700 group-hover:scale-[1.04]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="w-full">
-                  {/* Info row */}
+                  {/* Image */}
                   <div
-                    className="flex items-start justify-between gap-4 pb-4 mb-4"
-                    style={{
-                      borderBottom:
-                        "1px solid color-mix(in srgb, #1a1a1a 10%, transparent)",
-                      paddingBlock: "1rem",
-                    }}
+                    className="relative overflow-hidden bg-light w-full md:w-1/2"
+                    style={{ aspectRatio: "16/9" }}
                   >
-                    <div>
-                      <h2 className="text-[1.15rem] font-semibold tracking-[-0.01em] text-[#1a1a1a] mb-1">
-                        {project.title}
-                      </h2>
-                      <p className="label">{project.category}</p>
-                    </div>
-                    <span className="label shrink-0 mt-0.5">
-                      {project.year}
-                    </span>
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover aspect-video transition-transform duration-700 group-hover:scale-[1.04]"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
                   </div>
-
-                  {/* Description */}
-                  <p
-                    className="text-[0.85rem] leading-[1.7] text-taupe mb-4"
-                    style={{ paddingBlock: "0.25rem" }}
-                  >
-                    {project.description}
-                  </p>
-
-                  {/* Tech + links */}
-                  <div
-                    className="flex flex-wrap items-center gap-2 mb-4"
-                    style={{ paddingBlock: "1rem" }}
-                  >
-                    {project.tech.slice(0, 4).map((tech) => (
-                      <span key={tech} className="tag">
-                        {tech}
+                  <div className="w-full">
+                    {/* Info row */}
+                    <div
+                      className="flex items-start justify-between gap-4 pb-4 mb-4"
+                      style={{
+                        borderBottom:
+                          "1px solid color-mix(in srgb, #1a1a1a 10%, transparent)",
+                        paddingBlock: "1rem",
+                      }}
+                    >
+                      <div>
+                        <h2 className="text-[1.15rem] font-semibold tracking-[-0.01em] text-[#1a1a1a] mb-1">
+                          {project.title}
+                        </h2>
+                        <p className="label">{project.category}</p>
+                      </div>
+                      <span className="label shrink-0 mt-0.5">
+                        {project.year}
                       </span>
-                    ))}
-                  </div>
+                    </div>
 
-                  <div className="flex flex-wrap gap-3">
-                    {project.caseStudy && (
-                      <TransitionLink
-                        href={href(`/projects/${project.slug}`)}
-                        label={`${project.title} · ${t.caseStudy.counter}`}
-                        className="btn btn-filled text-[0.7rem] py-1 px-4"
-                      >
-                        <ArrowLabel text={t.projectsPage.caseStudy} />
-                      </TransitionLink>
-                    )}
-                    {project.links.live && (
-                      <a
-                        href={project.links.live}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn text-[0.7rem] py-[0.45rem] px-4"
-                      >
-                        <ArrowLabel text={t.projectsPage.viewSite} />
-                      </a>
-                    )}
-                    {project.links.repo && (
-                      <a
-                        href={project.links.repo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn text-[0.7rem] py-[0.45rem] px-4"
-                      >
-                        <ArrowLabel text={t.projectsPage.github} />
-                      </a>
-                    )}
+                    {/* Description */}
+                    <p
+                      className="text-[0.85rem] leading-[1.7] text-taupe mb-4"
+                      style={{ paddingBlock: "0.25rem" }}
+                    >
+                      {project.description}
+                    </p>
+
+                    {/* Tech + links */}
+                    <div
+                      className="flex flex-wrap items-center gap-2 mb-4"
+                      style={{ paddingBlock: "1rem" }}
+                    >
+                      {project.tech.slice(0, 4).map((tech) => (
+                        <span key={tech} className="tag">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                      {project.caseStudy && (
+                        <TransitionLink
+                          href={href(`/projects/${project.slug}`)}
+                          label={`${project.title} · ${t.caseStudy.counter}`}
+                          className="btn btn-filled text-[0.7rem] py-1 px-4"
+                        >
+                          <ArrowLabel text={t.projectsPage.caseStudy} />
+                        </TransitionLink>
+                      )}
+                      {live && (
+                        <a
+                          href={live}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn text-[0.7rem] py-[0.45rem] px-4"
+                        >
+                          <ArrowLabel text={t.projectsPage.viewSite} />
+                        </a>
+                      )}
+                      {repos.map((repo) => (
+                        <a
+                          key={repo.url}
+                          href={repo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn text-[0.7rem] py-[0.45rem] px-4"
+                        >
+                          <ArrowLabel
+                            text={
+                              repo.label
+                                ? t.projectsPage.githubPart.replace("{part}", repo.label)
+                                : t.projectsPage.github
+                            }
+                          />
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </div>
         </div>

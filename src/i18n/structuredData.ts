@@ -1,4 +1,5 @@
 import type { Locale } from "./config";
+import { projectLinks } from "./projectLinks";
 import type { Dictionary, Project } from "./types";
 import { owner, siteUrl } from "@/site";
 
@@ -16,10 +17,6 @@ export const WEBSITE_ID = abs("/#website");
 
 type Node = Record<string, unknown>;
 
-/** A project link, unless it is still a "#" placeholder. */
-export function realLink(url?: string) {
-  return url && !url.startsWith("#") ? url : undefined;
-}
 type Crumb = { name: string; path: string };
 
 export function graph(...nodes: Node[]) {
@@ -148,7 +145,8 @@ export function projectNode(t: Dictionary, lang: Locale, project: Project): Node
   const caseStudyUrl = project.caseStudy
     ? abs(`/${lang}/projects/${project.slug}`)
     : undefined;
-  const live = realLink(project.links.live);
+  const { live, repos } = projectLinks(project);
+  const elsewhere = [...(live ? [live] : []), ...repos.map((r) => r.url)];
   return {
     "@type": "CreativeWork",
     // Projects without a case study have no page of their own.
@@ -158,14 +156,14 @@ export function projectNode(t: Dictionary, lang: Locale, project: Project): Node
     name: project.title,
     headline: project.caseStudy?.tagline ?? project.subtitle,
     description: project.description,
-    url: caseStudyUrl ?? live ?? realLink(project.links.repo),
+    url: caseStudyUrl ?? elsewhere[0],
     image: abs(project.caseStudy?.hero.src ?? project.image),
     genre: project.category,
     keywords: project.tech.join(", "),
     inLanguage: lang,
     author: { "@id": PERSON_ID },
     creator: { "@id": PERSON_ID },
-    ...(live ? { sameAs: live } : {}),
+    ...(elsewhere.length ? { sameAs: elsewhere } : {}),
     ...(project.caseStudy
       ? { abstract: project.caseStudy.overview.join(" ") }
       : {}),

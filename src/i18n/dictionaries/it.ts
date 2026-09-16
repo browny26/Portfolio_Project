@@ -394,7 +394,7 @@ const projects: Project[] = [
       "Vercel",
     ],
     image: "/imgs/newmann-landing.webp",
-    links: { live: "#" },
+    links: { live: "https://newmann.ai" },
     color: "#0f766e",
     caseStudy: newmannCaseStudy,
   },
@@ -420,7 +420,14 @@ const projects: Project[] = [
       "Docker",
     ],
     image: "/imgs/mockupAtlas.jpeg",
-    links: { live: "#", repo: "#" },
+    links: {
+      live: "https://atlas-works.vercel.app/",
+      repos: [
+        { label: "Frontend", url: "https://github.com/browny26/atlas-frontend" },
+        { label: "Backend", url: "https://github.com/browny26/atlas-backend" },
+        { label: "Vecchio AI service", url: "https://github.com/browny26/atlas-ai_service" },
+      ],
+    },
     color: "#4f46e5",
     caseStudy: atlasCaseStudy,
   },
@@ -444,7 +451,7 @@ const projects: Project[] = [
       "Aruba Linux",
     ],
     image: "/imgs/mockupSacithLab.svg",
-    links: { live: "#" },
+    links: { live: "https://sacith-lab.com" },
     color: "#d97706",
     caseStudy: sacithLabCaseStudy,
   },
@@ -458,7 +465,7 @@ const projects: Project[] = [
       "Catalogo prodotti bilingue e moderno per Sacith S.r.l., azienda italiana di sistemi di aeromassaggio. Ottimizzazione SEO completa con integrazione di Google Analytics.",
     tech: ["PHP", "MySQL", "JavaScript", "Tailwind CSS"],
     image: "/imgs/mockupSacith.png",
-    links: { live: "#" },
+    links: { live: "https://sacith.com" },
     color: "#059669",
   },
   {
@@ -471,7 +478,7 @@ const projects: Project[] = [
       "Sito di uno studio di architettura in cui il movimento è l'esperienza centrale. Animazioni GSAP fluide costruiscono un'esplorazione immersiva.",
     tech: ["HTML", "CSS", "JavaScript", "GSAP"],
     image: "/imgs/mockupNovaVice.png",
-    links: { live: "#", repo: "#" },
+    links: { live: "#", repos: [{ url: "https://github.com/browny26/NovaVice" }] },
     color: "#7c3aed",
   },
   {
@@ -484,7 +491,7 @@ const projects: Project[] = [
       "Universo immersivo con una ricca gamma di prodotti in un'esperienza a overlay interconnessi. Animazioni GSAP avanzate e integrazione video.",
     tech: ["React", "GSAP", "Video"],
     image: "/imgs/mockupAwwwards.png",
-    links: { live: "#", repo: "#" },
+    links: { live: "#" },
     color: "#2563eb",
   },
 ];
@@ -835,6 +842,7 @@ const it: Dictionary = {
     caseStudy: "Case study →",
     viewSite: "Vai al sito ↗",
     github: "GitHub →",
+    githubPart: "GitHub · {part} →",
   },
 
   contactPage: {
@@ -897,6 +905,7 @@ const it: Dictionary = {
     category: "Categoria",
     viewSite: "Vai al sito ↗",
     github: "GitHub →",
+    githubPart: "GitHub · {part} →",
     overview: "Panoramica",
     challenge: "La sfida",
     process: "Processo",

@@ -29,6 +29,12 @@ export type CaseStudy = {
   learnings: string[];
 };
 
+export type Repository = {
+  url: string;
+  /** Which part of the project it holds, when there is more than one: "Frontend". */
+  label?: string;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -38,7 +44,8 @@ export type Project = {
   description: string;
   tech: string[];
   image: string;
-  links: { live?: string; repo?: string; design?: string };
+  /** "#" marks a link still to be filled in: it is never rendered. */
+  links: { live?: string; repos?: Repository[]; design?: string };
   color: string;
   caseStudy?: CaseStudy;
 };
@@ -221,6 +228,8 @@ export type Dictionary = {
     caseStudy: string;
     viewSite: string;
     github: string;
+    /** GitHub button for one of several repositories; "{part}" is its label. */
+    githubPart: string;
   };
 
   contactPage: {
@@ -279,6 +288,7 @@ export type Dictionary = {
     category: string;
     viewSite: string;
     github: string;
+    githubPart: string;
     overview: string;
     challenge: string;
     process: string;
