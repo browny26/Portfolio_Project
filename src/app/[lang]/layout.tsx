@@ -6,6 +6,8 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { pageMetadata } from "@/i18n/metadata";
 import { I18nProvider } from "@/i18n/provider";
 import { siteUrl } from "@/site";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { DM_Mono, Syne } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -70,6 +72,9 @@ export default async function RootLayout({
             </PageTransition>
           </SmoothScroll>
         </I18nProvider>
+        {/* Page views and Core Web Vitals, collected only on Vercel deployments. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
