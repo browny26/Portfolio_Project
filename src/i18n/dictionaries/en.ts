@@ -495,7 +495,7 @@ const en: Dictionary = {
   meta: {
     title: "Luisa Cerin Ogbeiwi — Software & AI Developer",
     description:
-      "Full-stack developer crafting modern websites and sleek interfaces. Blending design and code to deliver unique digital experiences.",
+      "Full-stack and AI developer in Gallarate, near Milan, Italy: websites, web apps and AI integrations built with React and Next.js. Available for freelance projects.",
     keywords: [
       "web developer",
       "designer",

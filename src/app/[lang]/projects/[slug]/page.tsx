@@ -1,8 +1,15 @@
 import CaseStudy from "@/components/CaseStudy";
+import JsonLd from "@/components/JsonLd";
 import NotFoundContent from "@/components/NotFoundContent";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { pageMetadata } from "@/i18n/metadata";
+import {
+  graph,
+  pageNodes,
+  personRefNode,
+  projectNode,
+} from "@/i18n/structuredData";
 import type { Locale } from "@/i18n/config";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -44,6 +51,7 @@ export async function generateMetadata({
     // Use the case study's own hero image for social previews so a shared
     // link previews the actual project, not the site-wide default.
     images: [project.caseStudy.hero.src],
+    kind: { type: "article", tags: project.tech },
   });
 }
 
@@ -53,7 +61,8 @@ export default async function CaseStudyPage({
   const { lang, slug } = await params;
   if (!isLocale(lang)) notFound();
 
-  const caseStudies = await caseStudiesFor(lang);
+  const t = await getDictionary(lang);
+  const caseStudies = t.projects.filter((p) => p.caseStudy);
   const index = caseStudies.findIndex((p) => p.slug === slug);
   const project = caseStudies[index];
   // Same 404 page as any other miss, rendered inside the locale layout.
@@ -64,11 +73,34 @@ export default async function CaseStudyPage({
       ? caseStudies[(index + 1) % caseStudies.length]
       : null;
 
+  const title = `${project.title} — ${t.meta.caseStudySuffix}`;
+  const work = projectNode(t, lang, project);
+
   return (
-    <CaseStudy
-      project={{ ...project, caseStudy: project.caseStudy }}
-      index={index + 1}
-      next={next}
-    />
+    <>
+      <JsonLd
+        data={graph(
+          personRefNode(lang),
+          work,
+          ...pageNodes({
+            type: "WebPage",
+            lang,
+            route: `/projects/${slug}`,
+            title,
+            description: project.caseStudy.tagline,
+            crumbs: [
+              { name: t.nav.projects, path: `/${lang}/projects` },
+              { name: project.title, path: `/${lang}/projects/${slug}` },
+            ],
+            extra: { mainEntity: { "@id": work["@id"] } },
+          }),
+        )}
+      />
+      <CaseStudy
+        project={{ ...project, caseStudy: project.caseStudy }}
+        index={index + 1}
+        next={next}
+      />
+    </>
   );
 }

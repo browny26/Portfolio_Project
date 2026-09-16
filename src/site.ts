@@ -19,3 +19,20 @@ export const siteUrl: URL = (() => {
 
   return new URL("http://localhost:3000");
 })();
+
+/**
+ * The site's owner as the rest of the web knows her. Read by the structured
+ * data and by /llms.txt, so search engines and AI assistants describe the
+ * same person the pages do.
+ */
+export const owner = {
+  name: "Luisa Cerin Ogbeiwi",
+  givenName: "Luisa",
+  familyName: "Cerin Ogbeiwi",
+  email: "luisa.cerinogbeiwi@gmail.com",
+  telephone: "+393773183236",
+  locality: "Gallarate",
+  region: "Lombardia",
+  country: "IT",
+  sameAs: ["https://github.com/browny26", "https://linkedin.com/in/luisa-cerin"],
+};
