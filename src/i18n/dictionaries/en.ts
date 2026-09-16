@@ -520,6 +520,9 @@ const en: Dictionary = {
     projectsTitle: "Projects — Luisa Cerin Ogbeiwi",
     projectsDescription:
       "A selection of projects spanning web development, UI/UX design and mobile applications.",
+    aboutTitle: "About — Luisa Cerin Ogbeiwi",
+    aboutDescription:
+      "Full-stack and AI developer based in Gallarate, Italy: my background, skills and experience.",
     contactTitle: "Contact — Luisa Cerin Ogbeiwi",
     contactDescription:
       "Have a project in mind, a job offer, or just want to say hello? Get in touch.",
@@ -539,9 +542,8 @@ const en: Dictionary = {
 
   nav: {
     projects: "Projects",
+    about: "About",
     services: "Services",
-    skills: "Skills",
-    experience: "Experience",
     contact: "Contact",
   },
 
@@ -670,8 +672,17 @@ const en: Dictionary = {
     },
   },
 
-  about: {
+  aboutTeaser: {
     label: "About me",
+    highlights: ["launch", "AI"],
+    bio: "I design and build digital products from idea to launch: polished interfaces, solid code and AI where it truly makes a difference.",
+    cta: "More about me →",
+  },
+
+  about: {
+    label: "Get to know me",
+    title: "About",
+    titleAccent: "me",
     highlights: ["Gallarate", "LLMs", "RAG-based", "conversational assistants"],
     bio: "Full-stack and AI developer based in Gallarate, Italy. I build digital experiences that combine thoughtful design with clean, scalable code, bringing LLMs into products: conversational assistants, automations and RAG-based features. Currently studying Digital Communication & Computer Science at the University of Milan.",
     facts: {

@@ -9,7 +9,7 @@ import { siteUrl } from "@/site";
  * page uses, so a new case study appears in the sitemap the moment it appears
  * in `projects`.
  */
-const STATIC_ROUTES = ["", "/projects", "/contact"] as const;
+const STATIC_ROUTES = ["", "/projects", "/about", "/contact"] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const abs = (path: string) => new URL(path, siteUrl).toString();

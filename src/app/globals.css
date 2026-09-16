@@ -326,6 +326,18 @@ body {
   .btn::before { transition-duration: 0.01ms; }
 }
 
+/* ─── Header ─── */
+/* Tighter gutters on phones, so the logo, the language switch and the burger
+   fit on one row of a 360px screen. */
+.site-header {
+  padding: 1rem 1.25rem;
+}
+@media (min-width: 768px) {
+  .site-header {
+    padding: 1.1rem 2rem;
+  }
+}
+
 /* ─── Section spacing ─── */
 .section {
   padding: 5rem 2rem;

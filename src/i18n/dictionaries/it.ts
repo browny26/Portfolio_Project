@@ -527,6 +527,9 @@ const it: Dictionary = {
     contactTitle: "Contatti — Luisa Cerin Ogbeiwi",
     contactDescription:
       "Hai un progetto in mente, un'offerta di lavoro o vuoi solo salutare? Scrivimi.",
+    aboutTitle: "Chi sono — Luisa Cerin Ogbeiwi",
+    aboutDescription:
+      "Full-stack e AI developer con base a Gallarate: il mio percorso, le competenze e le esperienze.",
     caseStudySuffix: "Case study · Luisa Cerin Ogbeiwi",
     notFoundTitle: "Pagina non trovata — Luisa Cerin Ogbeiwi",
   },
@@ -543,9 +546,8 @@ const it: Dictionary = {
 
   nav: {
     projects: "Progetti",
+    about: "Chi sono",
     services: "Servizi",
-    skills: "Competenze",
-    experience: "Esperienza",
     contact: "Contatti",
   },
 
@@ -674,8 +676,17 @@ const it: Dictionary = {
     },
   },
 
-  about: {
+  aboutTeaser: {
     label: "Chi sono",
+    highlights: ["lancio", "intelligenza", "artificiale"],
+    bio: "Progetto e sviluppo prodotti digitali dall'idea al lancio: interfacce curate, codice solido e intelligenza artificiale dove fa davvero la differenza.",
+    cta: "Scopri di più su di me →",
+  },
+
+  about: {
+    label: "Conosciamoci",
+    title: "Chi",
+    titleAccent: "sono",
     highlights: ["Gallarate", "LLM", "RAG", "assistenti conversazionali"],
     bio: "Full-stack e AI developer con base a Gallarate. Costruisco esperienze digitali che uniscono un design pensato a codice pulito e scalabile, integrando modelli LLM nei prodotti: assistenti conversazionali, automazioni e funzionalità basate su RAG. Attualmente studio Comunicazione Digitale e Informatica all'Università degli Studi di Milano.",
     facts: {

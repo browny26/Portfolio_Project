@@ -5,8 +5,6 @@ import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import ProjectsBanner from "@/components/ProjectsBanner";
 import ServicesSection from "@/components/ServicesSection";
-import SkillsSection from "@/components/SkillsSection";
-import ExperienceSection from "@/components/ExperienceSection";
 import Footer, { curtainAbove } from "@/components/Footer";
 
 export default function HomeContent() {
@@ -24,8 +22,6 @@ export default function HomeContent() {
           <AboutSection />
           <ProjectsBanner />
           <ServicesSection />
-          <SkillsSection />
-          <ExperienceSection />
         </div>
         <Footer />
       </main>

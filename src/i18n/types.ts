@@ -72,6 +72,8 @@ export type Dictionary = {
     projectsDescription: string;
     contactTitle: string;
     contactDescription: string;
+    aboutTitle: string;
+    aboutDescription: string;
     /** Suffix appended to a case study title, e.g. "— Case study · Luisa Cerin Ogbeiwi" */
     caseStudySuffix: string;
     notFoundTitle: string;
@@ -89,9 +91,8 @@ export type Dictionary = {
 
   nav: {
     projects: string;
+    about: string;
     services: string;
-    skills: string;
-    experience: string;
     contact: string;
   };
 
@@ -141,9 +142,20 @@ export type Dictionary = {
     groups: Record<string, string[]>;
   };
 
-  /** The standalone "who I am" section, sitting between the hero and the work. */
+  /** The short "who I am" on the home page, between the hero and the work. It leads to the About page. */
+  aboutTeaser: {
+    label: string;
+    bio: string;
+    /** Phrases of the bio that get highlighted as the reader scrolls past them. */
+    highlights: string[];
+    cta: string;
+  };
+
+  /** The About page: its heading, then the full bio with the facts under it. */
   about: {
     label: string;
+    title: string;
+    titleAccent: string;
     bio: string;
     /** Phrases of the bio that get highlighted as the reader scrolls past them. */
     highlights: string[];

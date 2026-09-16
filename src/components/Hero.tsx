@@ -112,8 +112,10 @@ export default function Hero() {
       // Above the footer, which waits sticky at the bottom of the viewport from
       // the first screen on (see `curtainAbove` in Footer). Same level as the
       // sheet that follows, which comes later in the page and so still slides
-      // over the pinned hero.
-      style={{ zIndex: 1 }}
+      // over the pinned hero. The mark is wider than a phone screen: clipped
+      // sideways so it never widens the page, which would push the header's
+      // burger off the edge.
+      style={{ zIndex: 1, overflowX: "clip" }}
     >
       <div className="h-28" />
 

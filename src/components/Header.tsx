@@ -47,9 +47,8 @@ export default function Header() {
   // Sections live on the home page; `hash` links scroll instead of navigating.
   const navLinks = [
     { label: t.nav.projects, path: "/projects" },
+    { label: t.nav.about, path: "/about" },
     { label: t.nav.services, hash: "services" },
-    { label: t.nav.skills, hash: "skills" },
-    { label: t.nav.experience, hash: "experience" },
     { label: t.nav.contact, path: "/contact" },
   ];
 
@@ -86,6 +85,7 @@ export default function Header() {
   const darkHero =
     route === "/contact" ||
     route === "/projects" ||
+    route === "/about" ||
     t.projects.some((p) => p.caseStudy && route === `/projects/${p.slug}`);
   const onDark = menuOpen || (darkHero && !scrolled);
   const chrome = onDark ? "#f5f3ef" : "#1a1a1a";
@@ -218,14 +218,14 @@ export default function Header() {
     <>
       {/* Header bar: centred with auto margins, inset from the edges once scrolled.
           The margin is inline because the global `* { margin: 0 }` reset in
-          globals.css sits outside Tailwind's layers and overrides `mx-auto`. */}
+          globals.css sits outside Tailwind's layers and overrides `mx-auto`;
+          the padding, which narrows on phones, lives in `.site-header`. */}
       <header
         ref={headerRef}
-        className="fixed left-0 right-0 z-50 flex w-full max-w-7xl items-center justify-between"
+        className="site-header fixed left-0 right-0 z-50 flex w-full max-w-7xl items-center justify-between gap-4"
         style={{
           opacity: 0,
           marginInline: "auto",
-          padding: "1.1rem 2rem",
           top: scrolled ? "1.5rem" : "0",
           width: scrolled ? "calc(100% - 2rem)" : "100%",
           transition: "top 0.45s ease, width 0.45s ease",
@@ -260,7 +260,7 @@ export default function Header() {
             }}
           />
           <span
-            className="label"
+            className="label whitespace-nowrap"
             style={{ color: chrome, transition: "color 0.4s" }}
           >
             LCO Studio
@@ -268,27 +268,31 @@ export default function Header() {
         </Link>
 
         {/* Right side */}
-        <div className="relative z-50 flex items-center gap-5">
+        <div className="relative z-50 flex items-center gap-4 md:gap-5">
           <LanguageSwitcher
             color={chrome}
             dim={onDark ? "rgba(245,243,239,0.4)" : "#8c8680"}
           />
 
-          {/* Contact button, desktop only. Inverted on dark heroes. */}
-          <Link
-            href={href("/contact")}
-            className={`btn hidden md:inline-flex ${darkHero && !scrolled ? "btn-filled-inverted" : "btn-filled"}`}
-            style={{
-              fontSize: "0.72rem",
-              padding: "0.55rem 1.1rem",
-              opacity: menuOpen ? 0 : 1,
-              transition:
-                "opacity 0.3s, background 0.25s, color 0.25s, border-color 0.25s",
-              pointerEvents: menuOpen ? "none" : "auto",
-            }}
-          >
-            {t.header.getInTouch}
-          </Link>
+          {/* Contact button, desktop only. Inverted on dark heroes. Hidden
+              through a wrapper: `.btn` sets its own display outside Tailwind's
+              layers, so `hidden` on the link itself would lose to it. */}
+          <span className="hidden md:block">
+            <Link
+              href={href("/contact")}
+              className={`btn ${darkHero && !scrolled ? "btn-filled-inverted" : "btn-filled"}`}
+              style={{
+                fontSize: "0.72rem",
+                padding: "0.55rem 1.1rem",
+                opacity: menuOpen ? 0 : 1,
+                transition:
+                  "opacity 0.3s, background 0.25s, color 0.25s, border-color 0.25s",
+                pointerEvents: menuOpen ? "none" : "auto",
+              }}
+            >
+              {t.header.getInTouch}
+            </Link>
+          </span>
 
           {/* Burger with its label, all screens */}
           <button

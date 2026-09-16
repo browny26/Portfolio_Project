@@ -92,11 +92,11 @@ export default function ProjectsContent() {
             {projects.map((project) => (
               <article
                 key={project.slug}
-                className="proj-card group opacity-0 flex gap-20"
+                className="proj-card group opacity-0 flex flex-col gap-6 md:flex-row md:gap-20"
               >
                 {/* Image */}
                 <div
-                  className="relative overflow-hidden mb-5 bg-light w-1/2"
+                  className="relative overflow-hidden bg-light w-full md:w-1/2"
                   style={{ aspectRatio: "16/9" }}
                 >
                   <Image

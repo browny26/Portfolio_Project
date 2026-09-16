@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Fragment, useEffect, useMemo, useRef } from "react";
 import ArrowLabel from "@/components/ArrowLabel";
+import { TransitionLink } from "@/components/PageTransition";
 import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -13,8 +14,14 @@ gsap.registerPlugin(ScrollTrigger);
 const WORD_STEP = 0.35;
 const WORD_LENGTH = 0.5;
 
-export default function AboutSection() {
-  const { t } = useI18n();
+/**
+ * The bio, lit word by word as it scrolls past. The home page shows the short
+ * version with a way through to the About page; the About page shows the full
+ * one, closed by the facts.
+ */
+export default function AboutSection({ full = false }: { full?: boolean }) {
+  const { t, href } = useI18n();
+  const copy = full ? t.about : t.aboutTeaser;
   const sectionRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLParagraphElement>(null);
   const factsRef = useRef<HTMLDivElement>(null);
@@ -24,12 +31,12 @@ export default function AboutSection() {
   // belong to a highlight phrase are marked, with trailing punctuation kept
   // outside the highlight block.
   const words = useMemo(() => {
-    const keys = new Set(t.about.highlights.flatMap((h) => h.split(/\s+/)));
-    return t.about.bio.split(/\s+/).map((raw) => {
+    const keys = new Set(copy.highlights.flatMap((h) => h.split(/\s+/)));
+    return copy.bio.split(/\s+/).map((raw) => {
       const [, core = raw, tail = ""] = raw.match(/^(.*?)([.,:;]?)$/) ?? [];
       return { raw, core, tail, highlight: keys.has(core) };
     });
-  }, [t]);
+  }, [copy]);
 
   useEffect(() => {
     const copy = copyRef.current;
@@ -73,8 +80,9 @@ export default function AboutSection() {
     return () => ctx.revert();
   }, [words]);
 
-  // The facts arrive as a colophon: the rule above them draws from the left,
-  // then each fact rises in turn.
+  // The facts (or, on the home page, the link to the About page) arrive as a
+  // colophon: the rule above them draws from the left, then each item rises in
+  // turn.
   useEffect(() => {
     const facts = factsRef.current;
     if (!facts || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -109,16 +117,23 @@ export default function AboutSection() {
         id="about"
         className="scroll-mt-24"
         style={{
-          // A light hairline, because this section and the projects banner below
-          // it are both dark: without it the two read as one block.
-          borderBottom:
-            "1px solid color-mix(in srgb, #f5f3ef 12%, transparent)",
+          // A light hairline, because on the home page this section and the
+          // projects banner below it are both dark: without it the two read as
+          // one block.
+          borderBottom: full
+            ? undefined
+            : "1px solid color-mix(in srgb, #f5f3ef 12%, transparent)",
         }}
       >
         <div className="section">
           {/* h2 for the section landmark; the .label class only carries the
-              visual size — search engines and screen readers read a heading. */}
-          <h2 className="label block mb-8 m-0">{t.about.label}</h2>
+              visual size — search engines and screen readers read a heading.
+              On the About page the page's own h1 already names it. */}
+          {!full && (
+            <h2 className="label block m-0" style={{ marginBottom: "2rem" }}>
+              {t.aboutTeaser.label}
+            </h2>
+          )}
 
           {/* Full bleed inside the section: no max-width, so the bio runs the
               whole measure. The type scales up with it to keep the lines from
@@ -156,7 +171,11 @@ export default function AboutSection() {
               rule of their own rather than sitting loose under the type. */}
           <div
             ref={factsRef}
-            className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5"
+            className={
+              full
+                ? "grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5"
+                : "flex"
+            }
             style={{ position: "relative", marginTop: "3.5rem", paddingTop: "2rem" }}
           >
             <i
@@ -172,12 +191,23 @@ export default function AboutSection() {
                 transformOrigin: "left",
               }}
             />
-            {facts.map(({ label, value, href, live }) => (
+            {!full && (
+              <div className="about-fact">
+                <TransitionLink
+                  href={href("/about")}
+                  label={t.nav.about}
+                  className="btn btn-filled-inverted"
+                >
+                  <ArrowLabel text={t.aboutTeaser.cta} />
+                </TransitionLink>
+              </div>
+            )}
+            {full && facts.map(({ label, value, href: link, live }) => (
               <div key={label} className="about-fact">
                 <p className="label mb-1">{label}</p>
-                {href ? (
+                {link ? (
                   <a
-                    href={href}
+                    href={link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="link-underline text-sm font-medium text-cream hover:text-taupe transition-colors"
