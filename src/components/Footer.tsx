@@ -24,7 +24,11 @@ export const curtainAbove: CSSProperties = {
   boxShadow: "0 40px 60px -40px rgba(0, 0, 0, 0.55)",
 };
 
-export default function Footer() {
+/**
+ * `compact` drops the "Hai un progetto in mente?" call to action, for the
+ * contact page, where it would only link back to itself.
+ */
+export default function Footer({ compact = false }: { compact?: boolean }) {
   const { t, href } = useI18n();
   const ref = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -78,17 +82,20 @@ export default function Footer() {
         return;
       }
 
-      gsap.fromTo(
-        lines,
-        { y: "110%" },
-        {
-          y: "0%",
-          duration: 0.85,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: { trigger: footer, start: "top 80%" },
-        },
-      );
+      // The compact footer has no headline lines to reveal.
+      if (lines.length) {
+        gsap.fromTo(
+          lines,
+          { y: "110%" },
+          {
+            y: "0%",
+            duration: 0.85,
+            stagger: 0.08,
+            ease: "power3.out",
+            scrollTrigger: { trigger: footer, start: "top 80%" },
+          },
+        );
+      }
       gsap.fromTo(
         meta,
         { opacity: 0, y: 20 },
@@ -115,45 +122,56 @@ export default function Footer() {
         ...(fits ? { position: "sticky", bottom: 0, zIndex: 0 } : null),
       }}
     >
-      <div ref={innerRef} className="section">
-        <div className="mb-14">
-          <div className="overflow-clip">
-            <div
-              className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
-            >
-              {t.footer.line1}
-            </div>
-          </div>
-          <div className="overflow-clip">
-            <div
-              className="reveal-line block italic font-bold tracking-[-0.03em] leading-[0.95] text-taupe"
-              style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
-            >
-              {t.footer.line2}
-            </div>
-          </div>
-          <div
-            className="overflow-clip mt-4"
-            style={{ marginTop: "1rem", marginBottom: "3rem" }}
-          >
-            <div className="reveal-line block">
-              <Link
-                href={href("/contact")}
-                className="btn btn-filled-inverted inline-flex mt-6"
+      <div
+        ref={innerRef}
+        className="section"
+        style={compact ? { paddingBlock: "3rem" } : undefined}
+      >
+        {!compact && (
+          <div className="mb-14">
+            <div className="overflow-clip">
+              <div
+                className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
+                style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
               >
-                <ArrowLabel text={t.footer.cta} />
-              </Link>
+                {t.footer.line1}
+              </div>
+            </div>
+            <div className="overflow-clip">
+              <div
+                className="reveal-line block italic font-bold tracking-[-0.03em] leading-[0.95] text-taupe"
+                style={{ fontSize: "clamp(2.5rem, 7vw, 7rem)" }}
+              >
+                {t.footer.line2}
+              </div>
+            </div>
+            <div
+              className="overflow-clip mt-4"
+              style={{ marginTop: "1rem", marginBottom: "3rem" }}
+            >
+              <div className="reveal-line block">
+                <Link
+                  href={href("/contact")}
+                  className="btn btn-filled-inverted inline-flex mt-6"
+                >
+                  <ArrowLabel text={t.footer.cta} />
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-6"
-          style={{
-            borderTop: "1px solid color-mix(in srgb, #f5f3ef 10%, transparent)",
-            paddingTop: "1.5rem",
-          }}
+          style={
+            compact
+              ? undefined
+              : {
+                  borderTop:
+                    "1px solid color-mix(in srgb, #f5f3ef 10%, transparent)",
+                  paddingTop: "1.5rem",
+                }
+          }
         >
           <div className="footer-meta opacity-0">
             <p className="font-semibold text-cream text-[0.9rem]">

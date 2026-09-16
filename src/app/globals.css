@@ -648,3 +648,433 @@ body {
     transition-duration: 0.01ms;
   }
 }
+
+/* ─── Tag che si riempie ───────────────────────────────────────────
+   Variante dei tag della pagina Chi sono: al passaggio del mouse un
+   riempimento d'inchiostro entra da sinistra, come nei pulsanti. */
+.tag-fill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color 0.45s cubic-bezier(0.76, 0, 0.24, 1),
+    border-color 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.tag-fill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #1a1a1a;
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.tag-fill:hover {
+  color: #f5f3ef;
+  border-color: #1a1a1a;
+}
+.tag-fill:hover::before {
+  transform: none;
+}
+
+/* ─── Linea del percorso (Chi sono) ────────────────────────────────
+   Una riga per ruolo sulla stessa scala di mesi. Le barre partono dal
+   mese d'inizio; quando è noto solo l'anno, l'inizio è sfumato. */
+.timeline-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.2rem;
+  padding-block: 0.6rem 0.2rem;
+  border-top: 1px solid color-mix(in srgb, #1a1a1a 12%, transparent);
+  transition: opacity 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.timeline-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.15rem;
+}
+.timeline-name strong {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+.timeline-track {
+  position: relative;
+  min-height: 1.9rem;
+}
+.timeline-year {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in srgb, #1a1a1a 12%, transparent);
+}
+.timeline-today {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed color-mix(in srgb, #1a1a1a 45%, transparent);
+  transform-origin: top;
+}
+.timeline-bar {
+  position: absolute;
+  top: 50%;
+  height: 6px;
+  margin-top: -3px;
+  background: #1a1a1a;
+  transform-origin: left center;
+}
+.timeline-bar.is-fuzzy {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 min(3rem, 45%));
+  mask-image: linear-gradient(90deg, transparent, #000 min(3rem, 45%));
+}
+.timeline-dot {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+}
+.timeline-dot .status-dot {
+  display: block;
+  width: 9px;
+  height: 9px;
+  margin: 0;
+}
+.timeline-axis {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  border-top: 1px solid color-mix(in srgb, #1a1a1a 12%, transparent);
+}
+.timeline-axis > span {
+  display: none;
+}
+.timeline-ticks {
+  position: relative;
+  height: 2rem;
+}
+.timeline-tick {
+  position: absolute;
+  top: 0.6rem;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+.timeline-tick:first-child {
+  translate: 0 0;
+}
+.timeline-tick.is-today {
+  color: #1a1a1a;
+}
+.timeline-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  margin-top: 0.6rem;
+}
+.timeline-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.timeline-swatch {
+  display: inline-block;
+  width: 1.6rem;
+  height: 6px;
+  background: #1a1a1a;
+}
+.timeline-swatch.is-fuzzy {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000);
+  mask-image: linear-gradient(90deg, transparent, #000);
+}
+.is-dimmed {
+  opacity: 0.32;
+}
+@media (min-width: 640px) {
+  .timeline-row,
+  .timeline-axis {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  .timeline-row {
+    padding-block: 0;
+    min-height: 3.1rem;
+  }
+  .timeline-axis > span {
+    display: block;
+  }
+}
+.exp-row-body {
+  transition: opacity 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* ─── Contatti ─────────────────────────────────────────────────────
+   L'email come secondo titolo: un clic la copia, la sottolineatura
+   entra da sinistra ed esce verso destra come nei link. */
+.contact-email {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: copy;
+  text-align: left;
+  color: #f5f3ef;
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 4.6vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.contact-email-text {
+  position: relative;
+}
+.contact-email-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.1em;
+  height: max(1px, 0.05em);
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.contact-email:is(:hover, :focus-visible) .contact-email-text::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.contact-hint-mask {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: bottom;
+}
+.contact-hint {
+  display: inline-block;
+}
+
+/* Righe dei social: un velo lino entra da sinistra. */
+.contact-link-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, #1a1a1a 10%, transparent);
+  color: #1a1a1a;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+.contact-link-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #e8e4dd;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.contact-link-row:is(:hover, :focus-visible)::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Campi: al focus la linea si traccia da sinistra, all'uscita si ritira
+   verso destra. In errore resta tracciata, color mattone. */
+.field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.field-label {
+  transition: color 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.field:focus-within .field-label {
+  color: #1a1a1a;
+}
+.field.is-error .field-label {
+  color: #a4492f;
+}
+.field-control {
+  position: relative;
+}
+.field-input {
+  display: block;
+  width: 100%;
+  padding: 0.8rem 0;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, #1a1a1a 18%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.45;
+  outline: none;
+}
+.field-input::placeholder {
+  color: #c8c4be;
+  font-weight: 400;
+}
+textarea.field-input {
+  resize: vertical;
+  min-height: 8.5rem;
+}
+.field-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #1a1a1a;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition:
+    transform 0.55s cubic-bezier(0.76, 0, 0.24, 1),
+    background-color 0.3s;
+}
+.field:focus-within .field-line {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.field.is-error .field-line {
+  transform: scaleX(1);
+  background: #a4492f;
+}
+.field-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 1.1rem;
+}
+.field-error {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #a4492f;
+}
+.field-count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Oggetto: radio nativi vestiti da pulsanti, con lo stesso riempimento. */
+.choice-group {
+  border: 0;
+  min-width: 0;
+}
+.choice-group legend {
+  margin-bottom: 0.8rem;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.choice {
+  position: relative;
+  display: inline-flex;
+}
+.choice input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.choice span {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  pointer-events: none;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid color-mix(in srgb, #1a1a1a 22%, transparent);
+  color: #1a1a1a;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition:
+    color 0.45s cubic-bezier(0.76, 0, 0.24, 1),
+    border-color 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.choice span::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #1a1a1a;
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.choice input:hover + span {
+  border-color: #1a1a1a;
+}
+.choice input:checked + span {
+  color: #f5f3ef;
+  border-color: #1a1a1a;
+}
+.choice input:checked + span::before {
+  transform: none;
+}
+.choice input:focus-visible + span {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 2px;
+}
+
+/* Pulsante d'invio: l'etichetta scorre in su su «Invio in corso». */
+.send-roll {
+  display: inline-grid;
+  overflow: clip;
+}
+.send-roll > span {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.send-roll > span + span {
+  transform: translateY(120%);
+}
+.send-roll[data-busy="true"] > span:first-child {
+  transform: translateY(-120%);
+}
+.send-roll[data-busy="true"] > span + span {
+  transform: none;
+}
+.sending-dots::after {
+  content: "…";
+  display: inline-block;
+  width: 1.2em;
+  animation: sending-dots 1s steps(1) infinite;
+}
+@keyframes sending-dots {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "…";
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-fill::before,
+  .timeline-row,
+  .exp-row-body,
+  .contact-email-text::after,
+  .contact-link-row::before,
+  .field-line,
+  .choice span::before,
+  .send-roll > span {
+    transition-duration: 0.01ms;
+  }
+  .sending-dots::after {
+    animation: none;
+  }
+}

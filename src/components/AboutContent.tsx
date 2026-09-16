@@ -49,21 +49,27 @@ export default function AboutContent() {
               <span className="label block" style={{ marginBottom: "1rem" }}>
                 {t.about.label}
               </span>
-              <div className="overflow-clip">
-                <h1
-                  className="reveal-line block font-bold tracking-[-0.03em] leading-[0.95] text-cream"
-                  style={{ fontSize: "clamp(3rem, 8vw, 8rem)" }}
-                >
-                  {t.about.title}{" "}
-                  <span className="text-taupe">{t.about.titleAccent}</span>
-                </h1>
-              </div>
+              {/* The two words rise one after the other. */}
+              <h1
+                className="flex flex-wrap font-bold tracking-[-0.03em] leading-[0.95] text-cream"
+                style={{ fontSize: "clamp(3rem, 8vw, 8rem)", columnGap: "0.24em" }}
+              >
+                <span className="block overflow-clip">
+                  <span className="reveal-line block">{t.about.title}</span>
+                </span>
+                <span className="block overflow-clip">
+                  <span className="reveal-line block text-taupe">
+                    {t.about.titleAccent}
+                  </span>
+                </span>
+              </h1>
             </div>
           </div>
 
           <AboutSection full />
-          <SkillsSection />
+          {/* The story first, then the inventory. */}
           <ExperienceSection />
+          <SkillsSection />
         </div>
 
         <Footer />

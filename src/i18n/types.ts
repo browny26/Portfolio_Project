@@ -56,9 +56,26 @@ export type Experience = {
   company: string;
   location?: string;
   period: string;
+  /**
+   * When the role started and, if it is over, ended: "YYYY-MM", or "YYYY" when
+   * only the year is known. Drives the timeline on the About page; a role
+   * without `end` is still ongoing.
+   */
+  start: string;
+  end?: string;
   tech: string[];
   bullets: string[];
 };
+
+export const contactSubjects = [
+  "landing",
+  "ecommerce",
+  "fullstack",
+  "job",
+  "other",
+] as const;
+
+export type ContactSubject = (typeof contactSubjects)[number];
 
 export type Dictionary = {
   /** Public path of the CV for this locale, opened in a new tab wherever it is linked. */
@@ -176,6 +193,14 @@ export type Dictionary = {
   experience: {
     label: string;
     title: string;
+    timeline: {
+      /** Accessible name of the chart. */
+      label: string;
+      today: string;
+      exact: string;
+      yearOnly: string;
+      ongoing: string;
+    };
     items: Experience[];
   };
 
@@ -203,31 +228,44 @@ export type Dictionary = {
     title: string;
     titleAccent: string;
     intro: string;
-    email: string;
+    copyEmail: string;
+    emailCopied: string;
+    /** Shown when the clipboard is unavailable and the address is selected instead. */
+    emailSelected: string;
+    openMail: string;
+    status: string;
+    statusValue: string;
+    reply: string;
+    replyValue: string;
     phone: string;
     location: string;
     locationValue: string;
     socials: string;
     cv: string;
-    sentTitle: string;
-    sentBody: string;
+    cvValue: string;
+    formTitle: string;
     nameLabel: string;
     namePlaceholder: string;
     emailLabel: string;
     emailPlaceholder: string;
     subjectLabel: string;
-    subjectPlaceholder: string;
-    subjects: {
-      landing: string;
-      ecommerce: string;
-      fullstack: string;
-      job: string;
-      other: string;
-    };
+    subjects: Record<ContactSubject, string>;
     messageLabel: string;
     messagePlaceholder: string;
+    errors: {
+      name: string;
+      email: string;
+      message: string;
+      send: string;
+    };
     sending: string;
     send: string;
+    sentTitle: string;
+    sentBody: string;
+    /** "{subject}" and "{count}" are replaced with the message's subject and length. */
+    sentRecap: string;
+    noSubject: string;
+    again: string;
   };
 
   caseStudy: {

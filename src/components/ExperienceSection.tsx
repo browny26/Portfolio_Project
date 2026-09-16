@@ -2,7 +2,8 @@
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import ExperienceTimeline from "@/components/ExperienceTimeline";
 import { useI18n } from "@/i18n/provider";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -11,6 +12,8 @@ export default function ExperienceSection() {
   const { t } = useI18n();
   const experience = t.experience.items;
   const sectionRef = useRef<HTMLElement>(null);
+  // The role under the pointer, in the timeline or in the list: both highlight it.
+  const [hot, setHot] = useState<number | null>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -68,11 +71,15 @@ export default function ExperienceSection() {
         </div>
       </div>
 
-      <div className="flex flex-col" style={{ marginTop: "2rem" }}>
+      <ExperienceTimeline items={experience} hot={hot} onHot={setHot} />
+
+      <div className="flex flex-col" style={{ marginTop: "4rem" }}>
         {experience.map((exp, i) => (
           <div
             key={i}
             className="exp-row py-7"
+            onPointerEnter={() => setHot(i)}
+            onPointerLeave={() => setHot(null)}
             style={{
               borderTop:
                 "1px solid color-mix(in srgb, #1a1a1a 10%, transparent)",
@@ -81,9 +88,17 @@ export default function ExperienceSection() {
               paddingTop: "1.75rem",
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-[10rem_1fr_12rem] gap-4 md:gap-8">
+            {/* Dimmed on this inner block: the row itself carries GSAP's inline opacity. */}
+            <div
+              className={`exp-row-body grid grid-cols-1 md:grid-cols-[10rem_1fr_12rem] gap-4 md:gap-8${
+                hot !== null && hot !== i ? " is-dimmed" : ""
+              }`}
+            >
               <div>
-                <p className="label leading-relaxed">{exp.period}</p>
+                <p className="label leading-relaxed">
+                  {!exp.end && <span className="status-dot" aria-hidden="true" />}
+                  {exp.period}
+                </p>
               </div>
 
               <div>
@@ -110,7 +125,7 @@ export default function ExperienceSection() {
 
               <div className="flex flex-wrap gap-2 content-start">
                 {exp.tech.map((tech) => (
-                  <span key={tech} className="tag">
+                  <span key={tech} className="tag tag-fill">
                     {tech}
                   </span>
                 ))}

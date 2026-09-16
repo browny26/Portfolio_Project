@@ -702,12 +702,20 @@ const en: Dictionary = {
   experience: {
     label: "Career",
     title: "Experience",
+    timeline: {
+      label: "Timeline of roles, from the first one to today",
+      today: "today",
+      exact: "Known dates",
+      yearOnly: "Start year only",
+      ongoing: "Ongoing",
+    },
     items: [
       {
         role: "Frontend Developer",
         company: "Contactlab (TeamSystem Group)",
         location: "Milan",
         period: "March 2026 — Present",
+        start: "2026-03",
         tech: ["React", "TypeScript", "fp-ts", "Ant Design"],
         bullets: [
           "Building the front-end of a Customer Data Platform (CDP) with React, TypeScript and functional programming paradigms with fp-ts",
@@ -720,6 +728,8 @@ const en: Dictionary = {
         company: "HRM Group",
         location: "Milan",
         period: "November 2024 — March 2026",
+        start: "2024-11",
+        end: "2026-03",
         tech: [
           "Next.js",
           "TypeScript",
@@ -740,6 +750,7 @@ const en: Dictionary = {
         company: "Newmann AI",
         location: "Remote",
         period: "2024 — Present",
+        start: "2024",
         tech: [
           "Next.js",
           "TypeScript",
@@ -768,6 +779,7 @@ const en: Dictionary = {
         role: "Founding Engineer",
         company: "Macrobite",
         period: "2025 — Present",
+        start: "2025",
         tech: ["React", "TypeScript", "Supabase", "Supabase Edge Functions"],
         bullets: [
           "Joined from day one as Founding Engineer, contributing to product definition and development of the web app",
@@ -780,6 +792,7 @@ const en: Dictionary = {
         company: "Sacith s.r.l.",
         location: "Cassano Magnago",
         period: "February 2025 — Present",
+        start: "2025-02",
         tech: [
           "PHP",
           "HTML",
@@ -826,20 +839,26 @@ const en: Dictionary = {
     titleAccent: "talk",
     intro:
       "Have a project in mind, a job offer, or just want to say hello? I'd love to hear from you.",
-    email: "Email",
+    copyEmail: "Click to copy",
+    emailCopied: "✓ Copied to clipboard",
+    emailSelected: "Selected: press ⌘C or Ctrl+C",
+    openMail: "Open in your mail app ↗",
+    status: "Status",
+    statusValue: "Available for projects",
+    reply: "Reply",
+    replyValue: "Within 24 hours",
     phone: "Phone",
     location: "Location",
     locationValue: "Gallarate, Italy",
     socials: "Socials",
     cv: "CV",
-    sentTitle: "Message sent!",
-    sentBody: "Thanks for reaching out. I'll get back to you within 24 hours.",
+    cvValue: "PDF",
+    formTitle: "Write to me",
     nameLabel: "Name *",
     namePlaceholder: "Your name",
     emailLabel: "Email *",
     emailPlaceholder: "your@email.com",
     subjectLabel: "Subject",
-    subjectPlaceholder: "Select a topic",
     subjects: {
       landing: "Landing page",
       ecommerce: "E-commerce",
@@ -848,9 +867,20 @@ const en: Dictionary = {
       other: "Other",
     },
     messageLabel: "Message *",
-    messagePlaceholder: "Tell me about your project or idea...",
-    sending: "Sending...",
+    messagePlaceholder: "Tell me about your project or idea…",
+    errors: {
+      name: "Add your name so I know who I'm talking to.",
+      email: "Check the address: it should look like name@domain.com.",
+      message: "Write a couple of lines about the project or the offer.",
+      send: "Your message didn't go through. Try again in a few minutes, or write to me at the address above.",
+    },
+    sending: "Sending",
     send: "Send message →",
+    sentTitle: "Message sent!",
+    sentBody: "Thanks for reaching out. I'll get back to you within 24 hours.",
+    sentRecap: "Subject: {subject} · {count} characters",
+    noSubject: "none",
+    again: "Write another message",
   },
 
   caseStudy: {

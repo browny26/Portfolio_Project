@@ -28,37 +28,46 @@ export default function SkillsSection() {
         );
       }
 
-      const cols = sectionRef.current?.querySelectorAll(".skill-col");
-      cols?.forEach((col, i) => {
-        gsap.fromTo(
-          col,
-          { opacity: 0, y: 30 },
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      // Each group counts its technologies up from zero while its tags are
+      // unmasked from the bottom, one group a beat after the other.
+      gsap.utils.toArray<HTMLElement>(".skill-col").forEach((col, i) => {
+        const tl = gsap.timeline({
+          delay: i * 0.1,
+          scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
+        });
+
+        const count = col.querySelector<HTMLElement>(".skill-count");
+        if (count) {
+          const counter = { value: 0 };
+          count.textContent = "0";
+          tl.to(
+            counter,
+            {
+              value: Number(count.dataset.count),
+              duration: 0.8,
+              ease: "power2.out",
+              onUpdate: () => {
+                count.textContent = String(Math.round(counter.value));
+              },
+            },
+            0,
+          );
+        }
+
+        tl.fromTo(
+          col.querySelectorAll(".skill-tag"),
+          { clipPath: "inset(100% 0% 0% 0%)" },
           {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
+            clipPath: "inset(0% 0% 0% 0%)",
+            duration: 0.5,
+            stagger: 0.015,
             ease: "power3.out",
-            delay: i * 0.1,
-            scrollTrigger: { trigger: col, start: "top 88%" },
           },
+          0,
         );
       });
-
-      const tags = sectionRef.current?.querySelectorAll(".skill-tag");
-      if (tags) {
-        gsap.fromTo(
-          tags,
-          { opacity: 0, scale: 0.9 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            stagger: 0.02,
-            ease: "power2.out",
-            scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
-          },
-        );
-      }
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -86,23 +95,29 @@ export default function SkillsSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
         {Object.entries(t.skills.groups).map(([category, list]) => (
-          <div key={category} className="skill-col opacity-0">
-            <h3
-              className="label text-[#1a1a1a]"
+          <div key={category} className="skill-col">
+            <div
+              className="flex items-baseline justify-between gap-4"
               style={{
                 borderBottom:
                   "1px solid color-mix(in srgb, #1a1a1a 10%, transparent)",
                 marginBottom: "1.5rem",
-                paddingBottom: "0.25rem",
+                paddingBottom: "0.4rem",
               }}
             >
-              {category}
-            </h3>
+              <h3 className="label text-[#1a1a1a]">{category}</h3>
+              <span
+                className="skill-count font-mono text-[1.35rem] leading-none tabular-nums text-[#1a1a1a]"
+                data-count={list.length}
+              >
+                {list.length}
+              </span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {list.map((skill) => (
                 <span
                   key={skill}
-                  className="skill-tag tag transition-colors cursor-default"
+                  className="skill-tag tag tag-fill cursor-default"
                 >
                   {skill}
                 </span>

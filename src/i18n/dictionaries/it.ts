@@ -706,12 +706,20 @@ const it: Dictionary = {
   experience: {
     label: "Percorso",
     title: "Esperienza",
+    timeline: {
+      label: "Linea del tempo dei ruoli, dal primo a oggi",
+      today: "oggi",
+      exact: "Date note",
+      yearOnly: "Solo l'anno d'inizio",
+      ongoing: "In corso",
+    },
     items: [
       {
         role: "Frontend Developer",
         company: "Contactlab (Gruppo TeamSystem)",
         location: "Milano",
         period: "Marzo 2026 — oggi",
+        start: "2026-03",
         tech: ["React", "TypeScript", "fp-ts", "Ant Design"],
         bullets: [
           "Sviluppo del front-end di una Customer Data Platform (CDP) con React, TypeScript e paradigmi di programmazione funzionale con fp-ts",
@@ -724,6 +732,8 @@ const it: Dictionary = {
         company: "HRM Group",
         location: "Milano",
         period: "Novembre 2024 — Marzo 2026",
+        start: "2024-11",
+        end: "2026-03",
         tech: [
           "Next.js",
           "TypeScript",
@@ -744,6 +754,7 @@ const it: Dictionary = {
         company: "Newmann AI",
         location: "Da remoto",
         period: "2024 — oggi",
+        start: "2024",
         tech: [
           "Next.js",
           "TypeScript",
@@ -772,6 +783,7 @@ const it: Dictionary = {
         role: "Founding Engineer",
         company: "Macrobite",
         period: "2025 — oggi",
+        start: "2025",
         tech: ["React", "TypeScript", "Supabase", "Supabase Edge Functions"],
         bullets: [
           "Ingresso dal primo giorno come Founding Engineer, con contributo alla definizione di prodotto e allo sviluppo della web app",
@@ -784,6 +796,7 @@ const it: Dictionary = {
         company: "Sacith s.r.l.",
         location: "Cassano Magnago",
         period: "Febbraio 2025 — oggi",
+        start: "2025-02",
         tech: [
           "PHP",
           "HTML",
@@ -830,20 +843,26 @@ const it: Dictionary = {
     titleAccent: "insieme",
     intro:
       "Hai un progetto in mente, un'offerta di lavoro o vuoi solo salutare? Mi fa piacere sentirti.",
-    email: "Email",
+    copyEmail: "Clic per copiare",
+    emailCopied: "✓ Copiata negli appunti",
+    emailSelected: "Selezionata: premi ⌘C o Ctrl+C",
+    openMail: "Apri nell'app di posta ↗",
+    status: "Stato",
+    statusValue: "Disponibile per progetti",
+    reply: "Risposta",
+    replyValue: "Entro 24 ore",
     phone: "Telefono",
     location: "Sede",
     locationValue: "Gallarate, Italia",
     socials: "Social",
     cv: "CV",
-    sentTitle: "Messaggio inviato!",
-    sentBody: "Grazie per avermi scritto. Ti rispondo entro 24 ore.",
+    cvValue: "PDF",
+    formTitle: "Scrivimi",
     nameLabel: "Nome *",
     namePlaceholder: "Il tuo nome",
     emailLabel: "Email *",
     emailPlaceholder: "tua@email.com",
     subjectLabel: "Oggetto",
-    subjectPlaceholder: "Scegli un argomento",
     subjects: {
       landing: "Landing page",
       ecommerce: "E-commerce",
@@ -852,9 +871,20 @@ const it: Dictionary = {
       other: "Altro",
     },
     messageLabel: "Messaggio *",
-    messagePlaceholder: "Raccontami il tuo progetto o la tua idea...",
-    sending: "Invio in corso...",
+    messagePlaceholder: "Raccontami il tuo progetto o la tua idea…",
+    errors: {
+      name: "Scrivi il tuo nome, così so come rivolgermi a te.",
+      email: "Controlla l'indirizzo: deve avere la forma nome@dominio.it.",
+      message: "Scrivi due righe sul progetto o sulla proposta.",
+      send: "Il messaggio non è partito. Riprova tra qualche minuto, oppure scrivimi all'indirizzo qui sopra.",
+    },
+    sending: "Invio in corso",
     send: "Invia il messaggio →",
+    sentTitle: "Messaggio inviato!",
+    sentBody: "Grazie per avermi scritto. Ti rispondo entro 24 ore.",
+    sentRecap: "Oggetto: {subject} · {count} caratteri",
+    noSubject: "non indicato",
+    again: "Scrivi un altro messaggio",
   },
 
   caseStudy: {
