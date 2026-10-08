@@ -33,6 +33,24 @@ export function personNode(t: Dictionary, lang: Locale): Node {
     familyName: owner.familyName,
     url: abs(`/${lang}/about`),
     jobTitle: `${t.hero.line1} ${t.hero.line2}`,
+    hasOccupation: {
+      "@type": "Occupation",
+      name: `${t.hero.line1} ${t.hero.line2}`,
+      occupationLocation: { "@type": "Country", name: "Italy" },
+      skills: skills.join(", "),
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: "Università degli Studi di Milano",
+      sameAs: "https://www.unimi.it",
+    },
+    // GEO: the area she works in, so "developer near Milan" queries match.
+    areaServed: [
+      { "@type": "City", name: owner.locality },
+      { "@type": "City", name: "Milano" },
+      { "@type": "Country", name: "Italy" },
+    ],
+    image: abs(`/${lang}/opengraph-image`),
     description: t.about.bio,
     email: `mailto:${owner.email}`,
     telephone: owner.telephone,

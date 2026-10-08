@@ -44,6 +44,22 @@ export async function generateMetadata({
     keywords: t.meta.keywords,
     authors: [{ name: "Luisa Cerin Ogbeiwi" }],
     creator: "Luisa Cerin Ogbeiwi",
+    // Let Google show large image previews and full-length snippets.
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    // Search Console's HTML-tag verification, if the domain isn't verified by DNS.
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
     ...pageMetadata({
       lang,
       title: t.meta.title,

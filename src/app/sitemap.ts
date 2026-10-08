@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { locales } from "@/i18n/config";
+import { defaultLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { siteUrl } from "@/site";
 
@@ -16,12 +16,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // hreflang alternates: every entry declares the other locales so Google can
   // group translations of the same page instead of picking one arbitrarily.
-  const languagesFor = (route: string) =>
-    Object.fromEntries(locales.map((l) => [l, abs(`/${l}${route}`)]));
+  // x-default matches the hreflang links the pages themselves declare.
+  const languagesFor = (route: string) => ({
+    ...Object.fromEntries(locales.map((l) => [l, abs(`/${l}${route}`)])),
+    "x-default": abs(`/${defaultLocale}${route}`),
+  });
+
+  // The site is statically built, so its content changes only on deploy.
+  const lastModified = new Date();
 
   const staticEntries: MetadataRoute.Sitemap = locales.flatMap((lang) =>
     STATIC_ROUTES.map((route) => ({
       url: abs(`/${lang}${route}`),
+      lastModified,
       alternates: { languages: languagesFor(route) },
     })),
   );
@@ -34,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           .filter((p) => p.caseStudy)
           .map((p) => ({
             url: abs(`/${lang}/projects/${p.slug}`),
+            lastModified,
             alternates: { languages: languagesFor(`/projects/${p.slug}`) },
           }));
       }),

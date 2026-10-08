@@ -5,14 +5,20 @@
  * needs one env var, not a grep across the codebase.
  *
  * Resolution order:
- *   1. NEXT_PUBLIC_SITE_URL — set this on the production deploy.
- *   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's stable production hostname,
- *      injected automatically on Vercel builds.
- *   3. localhost:3000 — dev fallback so builds don't crash without env vars.
+ *   1. NEXT_PUBLIC_SITE_URL — overrides everything when set.
+ *   2. PRODUCTION_URL on production deploys. Vercel's own production hostname
+ *      is the *.vercel.app alias, which would make every canonical, hreflang
+ *      and sitemap URL point away from the real domain.
+ *   3. VERCEL_PROJECT_PRODUCTION_URL — preview deploys.
+ *   4. localhost:3000 — dev fallback so builds don't crash without env vars.
  */
+const PRODUCTION_URL = "https://luisacerinogbeiwi.dev";
+
 export const siteUrl: URL = (() => {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return new URL(explicit);
+
+  if (process.env.VERCEL_ENV === "production") return new URL(PRODUCTION_URL);
 
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   if (vercel) return new URL(`https://${vercel}`);
