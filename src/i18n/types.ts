@@ -22,7 +22,13 @@ export type CaseStudy = {
    */
   myRole?: string;
   challenge: { intro: string; constraints: string[] };
-  process: { title: string; body: string; image: CaseStudyImage }[];
+  /**
+   * Optional areas the project is meant to be remembered for (e.g. SEO, GEO,
+   * design, the client relationship). Rendered as their own section between
+   * the challenge and the process when present.
+   */
+  focus?: { label: string; title: string; body: string; points: string[] }[];
+  process:{ title: string; body: string; image: CaseStudyImage }[];
   decisions: { title: string; why: string; tradeoff: string }[];
   results: { value: string; label: string }[];
   gallery: CaseStudyImage[];
@@ -291,6 +297,8 @@ export type Dictionary = {
     githubPart: string;
     overview: string;
     challenge: string;
+    focus: string;
+    focusTitle: string;
     process: string;
     processTitle: string;
     decisions: string;

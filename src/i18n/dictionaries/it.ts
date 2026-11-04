@@ -366,6 +366,184 @@ const sacithLabCaseStudy: CaseStudy = {
   ],
 };
 
+const sacithCaseStudy: CaseStudy = {
+  tagline:
+    "Il catalogo B2B bilingue di un produttore italiano, rifatto in Next.js: pagine racconto per i prodotti di punta, SEO tecnica fino all'ultima scheda prodotto e un sito scritto per essere letto dai motori di ricerca AI, oltre che dalle persone.",
+  role: "Full Stack Developer, UI/UX & SEO",
+  client: "Sacith S.r.l.",
+  timeline: "Dal 2025 a oggi",
+  hero: {
+    src: "/imgs/sacith-hero.webp",
+    alt: "La home di Sacith su un laptop e su un telefono, con la sede dell'azienda a Cassano Magnago",
+    aspect: "16/9",
+  },
+  overview: [
+    "Sacith progetta e produce sistemi idromassaggio e scarichi doccia a Cassano Magnago, vicino a Varese, e li vende B2B a produttori di vasche e docce, distributori e installatori. Il suo sito è prima di tutto un catalogo tecnico: ben oltre cento schede prodotto con codici, dimensioni, finiture e schede tecniche, in italiano e in inglese.",
+    "Nel 2026 l'ho rifatto da zero in Next.js e Supabase, al posto del catalogo PHP che avevo realizzato per loro l'anno prima. Il nuovo sito mantiene ogni prodotto raggiungibile in entrambe le lingue e aggiunge pagine editoriali per le linee di punta, Moon ed ESR, che presentano una bocchetta o una piletta doccia come farebbe un marchio di design.",
+  ],
+  myRole:
+    "Per l'azienda curo tutto lo sviluppo e sono il suo punto di contatto diretto. Ho portato il rifacimento dai requisiti alla produzione: architettura dell'informazione, design dell'interfaccia, front-end in Next.js, modello dati su Supabase e migrazione di ogni immagine e PDF dal vecchio hosting, SEO e GEO, analytics e deploy su Vercel. Ogni modifica parte da una conversazione con il cliente e finisce in una versione che può controllare online.",
+  challenge: {
+    intro:
+      "Il vecchio catalogo funzionava, ma era arrivato al suo limite: i contenuti erano divisi tra template PHP e un database MySQL su hosting condiviso, i prodotti di punta sembravano una riga qualsiasi di un elenco e i motori di ricerca vedevano due lingue senza il legame tra l'una e l'altra. Il cliente voleva un sito capace di vendere il design oltre alle specifiche, senza perdere nemmeno una scheda prodotto né la visibilità già conquistata.",
+    constraints: [
+      "Più di 120 schede prodotto, tra kit, prodotti configurabili e singoli, dovevano passare a un nuovo modello dati senza perdere un indirizzo",
+      "Ogni pagina in italiano e in inglese, con canonical, hreflang e dati strutturati corretti in tutte e due",
+      "Un catalogo B2B senza prezzi pubblici: i risultati arricchiti dovevano nascere dai dati tecnici, non dalle offerte",
+      "Il lessico tecnico doveva essere esattamente quello del cliente, in entrambe le lingue",
+    ],
+  },
+  focus: [
+    {
+      label: "SEO",
+      title: "SEO tecnica, una scheda prodotto alla volta",
+      body: "Ogni scheda ha un solo URL canonico che rispecchia la navigazione, le sue alternative in italiano e in inglese e dati strutturati generati dalle stesse righe del database da cui viene costruita la pagina.",
+      points: [
+        "Una sitemap generata da Supabase: 272 URL, ognuno con le alternative it, en e x-default",
+        "JSON-LD Product e ProductGroup da codici, materiali, dimensioni e finiture; BreadcrumbList su ogni scheda, FAQPage sulle liste prodotto",
+        "Immagini Open Graph generate, un solo H1 per pagina, URL con parametri e deploy di anteprima fuori dall'indice",
+      ],
+    },
+    {
+      label: "GEO",
+      title: "Leggibile dai motori di ricerca AI",
+      body: "Sempre più spesso chi compra chiede a un assistente prima di aprire un catalogo. Il sito offre a quei motori un accesso pulito, invece di lasciarli indovinare dal markup.",
+      points: [
+        "llms.txt e un llms-full.txt esteso con famiglie di prodotto, specifiche tecniche e domande e risposte",
+        "I crawler AI, da GPTBot a ClaudeBot e PerplexityBot, ricevono title, description e canonical direttamente nell'HTML invece che in streaming",
+        "FAQ e descrizioni prodotto scritte in linguaggio semplice, così una risposta può citarle così come sono",
+      ],
+    },
+    {
+      label: "Design",
+      title: "Un catalogo che racconta",
+      body: "Le specifiche restano a un clic, ma i prodotti di punta hanno pagine tutte loro, più vicine a un marchio di design che a un elenco di componenti.",
+      points: [
+        "Moon: una scena scura in cui tocchi il getto per cambiare il colore del suo LED",
+        "ESR: esplosi, un selettore di versione e dettagli annotati di una piletta doccia con brevetto in corso",
+        "Una navbar flottante in vetro, un menu a tendina editoriale e un unico sistema di etichette, breadcrumb e codici prodotto copiabili in tutto il catalogo",
+      ],
+    },
+    {
+      label: "Cliente",
+      title: "Una relazione, non una consegna",
+      body: "Sacith è tornata da me tre volte: per il catalogo PHP, per la vetrina di Sacith Lab e per questo rifacimento. Questa continuità ha dato forma al modo di lavorare.",
+      points: [
+        "Requisiti raccolti direttamente con il cliente e affrontati in brevi giri di feedback",
+        "La revisione di ottobre 2026 ha trasformato un elenco di correzioni tecniche su Moon ed ESR in un unico rilascio",
+        "Ogni richiesta legata a una modifica precisa nello storico, sul ramo da cui viene pubblicato il sito",
+      ],
+    },
+  ],
+  process: [
+    {
+      title: "Da PHP a Next.js e Supabase",
+      body: "Il catalogo è passato a un database Postgres su Supabase e le sue foto e i PDF a Supabase Storage, con uno script di migrazione che leggeva il vecchio export SQL e ricaricava ogni file. L'App Router genera liste e schede prodotto sul server; un unico albero di navigazione guida gli URL, i breadcrumb e il menu, e un proxy risponde 404 alle liste che non esistono prima che la pagina parta in streaming.",
+      image: {
+        src: "/imgs/sacith-catalog.webp",
+        alt: "La lista prodotti Sistema Acqua, la scheda del Line Jet e il Basic Air Kit su un telefono",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "Pagine racconto per i prodotti di punta",
+      body: "Moon ed ESR hanno ciascuna una pagina pensata intorno al prodotto e non intorno a un template: sezioni guidate dallo scroll costruite con GSAP e Framer Motion, i render e gli esplosi del cliente trasformati in dettagli annotati, e alla fine del racconto i codici, le dimensioni e i download di cui chi compra ha comunque bisogno.",
+      image: {
+        src: "/imgs/sacith-design.webp",
+        alt: "Le pagine Moon ed ESR in due finestre del browser, con ESR su un telefono",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "La SEO dentro il codice",
+      body: "Le vecchie route brevi come /single-product/ID funzionano ancora, ma indicano come unico canonical l'URL lungo della navigazione. La sitemap è generata dal database con l'ultimo aggiornamento di ogni riga, dove c'è; robots.txt tiene fuori gli URL di ricerca e dei filtri e blocca ogni deploy di anteprima; e ogni pagina ripete per intero i suoi Open Graph e Twitter, così nessuna perde l'immagine o la lingua.",
+      image: {
+        src: "/imgs/sacith-seo.webp",
+        alt: "Un risultato di ricerca per il Line Jet, i suoi tag canonical e hreflang, il JSON-LD Product e le anteprime social generate",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "GEO: un accesso per i motori AI",
+      body: "Next.js manda i metadati in streaming ai browser normali, cosa più veloce per le persone ma che lascia senza title né canonical i crawler che non eseguono JavaScript. Ho esteso la lista dei bot che ricevono l'HTML completo con i crawler AI, ho scritto a mano llms.txt e llms-full.txt e ho pubblicato le FAQ delle liste prodotto come dati FAQPage, così un assistente interrogato sulla norma EN 274 o sulla portata di scarico trova la risposta con le parole del cliente.",
+      image: {
+        src: "/imgs/sacith-geo.webp",
+        alt: "Il file llms.txt di Sacith, la lista dei crawler AI nella configurazione di Next.js e una FAQ pubblicata come dato strutturato",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "Il lavoro con il cliente",
+      body: "Il lavoro procede a giri: il cliente manda correzioni e nuovo materiale, io trasformo ogni giro in una versione online e la rivediamo insieme. Alcune richieste riguardano le parole, come usare \"shower waste\" invece di \"shower drain\" in inglese; altre il materiale, come nuovi render, schede tecniche e manuali che sostituiscono i vecchi file; tutte restano tracciate nello storico.",
+      image: {
+        src: "/imgs/sacith-client.webp",
+        alt: "La timeline della collaborazione con Sacith, dal catalogo PHP del 2025 ai rilasci di ottobre 2026",
+        aspect: "16/10",
+      },
+    },
+  ],
+  decisions: [
+    {
+      title: "L'URL della navigazione come unico canonical",
+      why: "Un prodotto era raggiungibile da più route brevi. Rendere canonico l'URL lungo che rispecchia il menu significa una pagina, un indirizzo e breadcrumb coerenti con il percorso fatto dal visitatore, mentre le vecchie route continuano a funzionare.",
+      tradeoff:
+        "URL più lunghi, e spostare un prodotto nel menu ne cambia l'indirizzo: l'albero di navigazione va trattato come parte della SEO.",
+    },
+    {
+      title: "Metadati nell'HTML per i crawler AI",
+      why: "I metadati in streaming tengono veloci le pagine per le persone, ma i crawler che leggono solo l'HTML perderebbero title e canonical. Aggiungere i bot AI alla lista di quelli che ricevono l'HTML completo risolve il problema per loro senza rallentare nessun altro.",
+      tradeoff:
+        "Impostare l'opzione sostituisce la lista del framework, quindi quella predefinita va copiata a mano e i nuovi bot vanno aggiunti man mano che compaiono.",
+    },
+    {
+      title: "Un vero 404 prima dello streaming",
+      why: "Le liste prodotto hanno uno stato di caricamento, quindi la risposta parte in streaming prima che la pagina possa chiamare notFound(), e una lista inesistente uscirebbe con un 200. Un proxy controlla prima l'URL sull'albero di navigazione e risponde con un 404 vero, così i motori di ricerca non indicizzano mai una pagina vuota.",
+      tradeoff:
+        "Il controllo gira a ogni richiesta di lista e si basa sullo stesso albero di navigazione del menu, quindi i due devono restare allineati.",
+    },
+  ],
+  results: [
+    {
+      value: "272",
+      label: "URL nella sitemap, ognuno con la sua alternativa in italiano, in inglese e x-default",
+    },
+    {
+      value: "120+",
+      label: "Schede prodotto migrate da MySQL a Supabase, ognuna con i propri dati strutturati Product",
+    },
+    {
+      value: "+35%",
+      label: "Traffico organico nella prima fase, dopo il lavoro SEO con GA4, GTM e Search Console sul catalogo PHP",
+    },
+    {
+      value: "3",
+      label: "Progetti per lo stesso cliente: il catalogo PHP, Sacith Lab e questo rifacimento",
+    },
+  ],
+  gallery: [
+    {
+      src: "/imgs/sacith-mobile.webp",
+      alt: "La lista Sistema Acqua, la pagina Moon e la pagina ESR in inglese su tre telefoni",
+      aspect: "16/10",
+    },
+    {
+      src: "/imgs/sacith-pages.webp",
+      alt: "Le pagine Download e Chi siamo del sito Sacith",
+      aspect: "16/10",
+    },
+    {
+      src: "/imgs/sacith-news.webp",
+      alt: "La pagina Novità di Sacith con la famiglia Moon e la piletta doccia ESR, su un laptop",
+      aspect: "16/10",
+    },
+  ],
+  learnings: [
+    "Un rifacimento è prima di tutto una migrazione. Per il cliente contava più tenere raggiungibile ogni prodotto e significativo ogni URL che qualsiasi funzione nuova, e fissare la struttura dei canonical prima di scrivere la prima pagina è ciò che ha reso sicuro il passaggio.",
+    "La GEO è in gran parte buona SEO detta in modo semplice: dati strutturati puliti, un llms.txt leggibile e metadati che non dipendono da JavaScript. La parte nuova è ricordarsi che a leggere potrebbe essere un modello, e scrivere le risposte che citerà.",
+    "Con un cliente di lunga data sono le piccole cose a pesare: usare le sue parole per i suoi prodotti, tenere vivo ogni vecchio indirizzo, consegnare ogni giro di feedback come qualcosa che può verificare. È per questa fiducia che c'è stato un terzo progetto.",
+  ],
+};
+
 const projects: Project[] = [
   {
     slug: "newmann",
@@ -458,15 +636,28 @@ const projects: Project[] = [
   {
     slug: "sacith",
     title: "Sacith",
-    subtitle: "Catalogo Prodotti",
-    category: "Sviluppo Web · SEO",
-    year: "2024–2025",
+    subtitle: "Catalogo Prodotti B2B",
+    category: "Sviluppo Web · SEO · GEO",
+    year: "2026",
     description:
-      "Catalogo prodotti bilingue e moderno per Sacith S.r.l., azienda italiana di sistemi di aeromassaggio. Ottimizzazione SEO completa con integrazione di Google Analytics.",
-    tech: ["PHP", "MySQL", "JavaScript", "Tailwind CSS"],
-    image: "/imgs/mockupSacith.png",
+      "Catalogo B2B bilingue rifatto in Next.js e Supabase per l'azienda italiana Sacith S.r.l.: pagine racconto per i prodotti di punta, SEO tecnica su ogni scheda prodotto e GEO per i motori di ricerca AI.",
+    tech: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Tailwind CSS",
+      "GSAP",
+      "Framer Motion",
+      "Schema.org",
+      "Resend",
+      "Vercel",
+    ],
+    image: "/imgs/sacith-hero.webp",
     links: { live: "https://sacith.com" },
-    color: "#059669",
+    color: "#2f6bff",
+    caseStudy: sacithCaseStudy,
   },
   {
     slug: "novavice",
@@ -908,6 +1099,8 @@ const it: Dictionary = {
     githubPart: "GitHub · {part} →",
     overview: "Panoramica",
     challenge: "La sfida",
+    focus: "Focus",
+    focusTitle: "Dove il progetto fa la differenza",
     process: "Processo",
     processTitle: "Come è nato",
     decisions: "Decisioni chiave",

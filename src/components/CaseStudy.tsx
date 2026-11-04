@@ -680,6 +680,51 @@ export default function CaseStudy({ project, index, next }: Props) {
             </div>
           </Row>
 
+          {/* Focus — the areas the project should be remembered for. Same
+              cream-band cards as the constraints, two to a row so each one
+              has room for its points. */}
+          {cs.focus && cs.focus.length > 0 && (
+            <>
+              <SectionHead label={t.caseStudy.focus} title={t.caseStudy.focusTitle} />
+              <div
+                className="grid grid-cols-1 md:grid-cols-[12rem_1fr] gap-4 md:gap-8"
+                style={{ paddingBottom: "3rem" }}
+              >
+                <span aria-hidden className="hidden md:block" />
+                <div className="cs-card-grid grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {cs.focus.map((f, i) => (
+                    <div key={f.label} className="constraint-card" style={{ opacity: 0 }}>
+                      <span className="label constraint-num">
+                        {String(i + 1).padStart(2, "0")} · {f.label}
+                      </span>
+                      <h3 className="text-[1.15rem] font-semibold tracking-[-0.01em] text-[#1a1a1a]">
+                        {f.title}
+                      </h3>
+                      <p
+                        className="text-[0.9rem] leading-[1.65]"
+                        style={{ color: bodyColor }}
+                      >
+                        {f.body}
+                      </p>
+                      <ul className="flex flex-col gap-2" style={{ marginTop: "0.25rem" }}>
+                        {f.points.map((point) => (
+                          <li
+                            key={point}
+                            className="grid grid-cols-[1rem_1fr] text-[0.85rem] leading-[1.6]"
+                            style={{ color: bodyColor }}
+                          >
+                            <span aria-hidden className="text-taupe">—</span>
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Process */}
           <SectionHead label={t.caseStudy.process} title={t.caseStudy.processTitle} />
           <ProcessSteps steps={cs.process} />

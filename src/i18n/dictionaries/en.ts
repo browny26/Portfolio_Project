@@ -366,6 +366,184 @@ const sacithLabCaseStudy: CaseStudy = {
   ],
 };
 
+const sacithCaseStudy: CaseStudy = {
+  tagline:
+    "The Next.js rebuild of an Italian manufacturer's bilingual B2B catalogue: storytelling pages for its flagship products, technical SEO down to every product sheet, and a site written to be read by AI search engines as well as by people.",
+  role: "Full Stack Developer, UI/UX & SEO",
+  client: "Sacith S.r.l.",
+  timeline: "2025 to Present",
+  hero: {
+    src: "/imgs/sacith-hero.webp",
+    alt: "The Sacith home page on a laptop and a phone, with the company headquarters in Cassano Magnago",
+    aspect: "16/9",
+  },
+  overview: [
+    "Sacith designs and manufactures whirlpool systems and shower drains in Cassano Magnago, near Varese, and sells them B2B to bathtub and shower manufacturers, distributors and installers. Its website is a technical catalogue first: well over a hundred product sheets with codes, dimensions, finishes and datasheets, in Italian and English.",
+    "In 2026 I rebuilt it from the ground up in Next.js and Supabase, replacing the PHP catalogue I had built for them the year before. The new site keeps every product reachable in both languages and adds editorial pages for the flagship lines, Moon and ESR, that present a jet or a shower drain the way a design brand would.",
+  ],
+  myRole:
+    "I am the company's developer and their direct point of contact. I took the rebuild from requirements to production: information architecture, interface design, the Next.js front-end, the Supabase data model and the migration of every image and PDF off the old hosting, SEO and GEO, analytics and deployment on Vercel. Every change starts from a conversation with the client and ends as a version they can check online.",
+  challenge: {
+    intro:
+      "The old catalogue worked, but it had reached its limits: content was split between PHP templates and a MySQL database on shared hosting, the flagship products looked like any other row in a list, and search engines saw two languages without the relationship between them. The client wanted a site that could sell design as well as specifications, without losing a single product page or the visibility already earned.",
+    constraints: [
+      "More than 120 product sheets, across kits, configurable and single products, had to move to a new data model without losing an address",
+      "Every page in Italian and English, with canonical, hreflang and structured data correct in both",
+      "A B2B catalogue with no public prices: rich results had to come from technical data, not from offers",
+      "The technical vocabulary had to be exactly the client's, in both languages",
+    ],
+  },
+  focus: [
+    {
+      label: "SEO",
+      title: "Technical SEO, one product sheet at a time",
+      body: "Every sheet has one canonical URL that mirrors the navigation, its Italian and English alternates, and structured data generated from the same database rows the page is rendered from.",
+      points: [
+        "A sitemap built from Supabase: 272 URLs, each with it, en and x-default alternates",
+        "Product and ProductGroup JSON-LD from codes, materials, dimensions and finishes; BreadcrumbList on every sheet, FAQPage on the product lists",
+        "Generated Open Graph images, one H1 per page, query-string URLs and preview deployments kept out of the index",
+      ],
+    },
+    {
+      label: "GEO",
+      title: "Readable by AI search engines",
+      body: "Buyers increasingly ask an assistant before they open a catalogue. The site gives those engines a clean way in, instead of leaving them to guess from the markup.",
+      points: [
+        "llms.txt and an extended llms-full.txt with product families, technical specifications and questions and answers",
+        "AI crawlers, from GPTBot to ClaudeBot and PerplexityBot, receive title, description and canonical directly in the HTML instead of in the stream",
+        "FAQs and product descriptions written in plain language, so an answer can quote them as they are",
+      ],
+    },
+    {
+      label: "Design",
+      title: "A catalogue that tells a story",
+      body: "The specifications stay one click away, but the flagship products get pages of their own, closer to a design brand than to a parts list.",
+      points: [
+        "Moon: a dark scene where you tap the jet to change the colour of its LED",
+        "ESR: exploded views, a version picker and annotated details of a patent-pending shower drain",
+        "A floating glass navbar, an editorial dropdown and one system of labels, breadcrumbs and copyable product codes across the whole catalogue",
+      ],
+    },
+    {
+      label: "Client",
+      title: "A relationship, not a delivery",
+      body: "Sacith has come back to me three times: for the PHP catalogue, for the Sacith Lab showcase and for this rebuild. That continuity shaped how the work is done.",
+      points: [
+        "Requirements gathered directly with the client and worked through in short feedback rounds",
+        "The October 2026 review turned a list of technical corrections on Moon and ESR into a single release",
+        "Each request tied to its own change in the history, on the branch the live site deploys from",
+      ],
+    },
+  ],
+  process: [
+    {
+      title: "From PHP to Next.js and Supabase",
+      body: "The catalogue moved to a Postgres database on Supabase and its photos and PDFs to Supabase Storage, through a migration script that read the old SQL export and re-uploaded every file. The App Router renders product lists and sheets on the server; one navigation tree drives the URLs, the breadcrumbs and the menu, and a proxy answers 404 for lists that do not exist before the page starts streaming.",
+      image: {
+        src: "/imgs/sacith-catalog.webp",
+        alt: "The Water System product list, the Line Jet product sheet and the Basic Air Kit on a phone",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "Flagship pages with a story",
+      body: "Moon and ESR each got a page designed around the product rather than a template: scroll-driven sections built with GSAP and Framer Motion, the client's renders and exploded views turned into annotated details, and the codes, dimensions and downloads a buyer still needs at the end of the story.",
+      image: {
+        src: "/imgs/sacith-design.webp",
+        alt: "The Moon and ESR pages in two browser windows, with ESR on a phone",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "SEO built into the code",
+      body: "Short legacy routes such as /single-product/ID still work, but point to the long navigation URL as the only canonical. The sitemap is generated from the database with each row's last update where it has one, robots.txt keeps search and filter URLs out and blocks every preview deployment, and every page repeats its full Open Graph and Twitter set so none of them loses its image or locale.",
+      image: {
+        src: "/imgs/sacith-seo.webp",
+        alt: "A search result for Line Jet, its canonical and hreflang tags, the Product JSON-LD and the generated social preview images",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "GEO: a way in for AI engines",
+      body: "Next.js streams metadata to ordinary browsers, which is faster for people but leaves crawlers that do not run JavaScript without a title or a canonical. I extended its list of HTML-limited bots with the AI crawlers, wrote llms.txt and llms-full.txt by hand, and published the product-list FAQs as FAQPage data, so an assistant asked about EN 274 or drain flow rates finds the answer in the client's own words.",
+      image: {
+        src: "/imgs/sacith-geo.webp",
+        alt: "The Sacith llms.txt, the list of AI crawlers in the Next.js configuration and an FAQ published as structured data",
+        aspect: "16/10",
+      },
+    },
+    {
+      title: "Working with the client",
+      body: "The work runs in rounds: the client sends corrections and new material, I turn each round into a version online, and we review it together. Some requests are about words, like using \"shower waste\" instead of \"shower drain\" in English; some are about material, like new renders, datasheets and manuals that replace the old files; all of them are tracked in the history.",
+      image: {
+        src: "/imgs/sacith-client.webp",
+        alt: "A timeline of the collaboration with Sacith from the PHP catalogue in 2025 to the October 2026 releases",
+        aspect: "16/10",
+      },
+    },
+  ],
+  decisions: [
+    {
+      title: "The navigation URL as the only canonical",
+      why: "A product used to be reachable from several short routes. Making the long URL that mirrors the menu the canonical one means one page, one address and breadcrumbs that match what the visitor clicked through, while the old routes keep working.",
+      tradeoff:
+        "Longer URLs, and moving a product in the menu changes its address, so the navigation tree has to be treated as part of the SEO.",
+    },
+    {
+      title: "Metadata in the HTML for AI crawlers",
+      why: "Streaming metadata keeps pages fast for people, but crawlers that read only the HTML would miss the title and the canonical. Adding the AI bots to the HTML-limited list fixes it for them without slowing anyone else down.",
+      tradeoff:
+        "Setting the option replaces the framework's own list, so the defaults are copied in by hand and new bots have to be added as they appear.",
+    },
+    {
+      title: "A real 404 before the page streams",
+      why: "Product lists have a loading state, so their response starts streaming before the page can call notFound(), and a list that does not exist would go out as a 200. A proxy checks the URL against the navigation tree first and answers a proper 404, so search engines never index an empty page.",
+      tradeoff:
+        "The check runs on every list request and relies on the same navigation tree as the menu, so the two have to stay in step.",
+    },
+  ],
+  results: [
+    {
+      value: "272",
+      label: "URLs in the sitemap, each with its Italian, English and x-default alternate",
+    },
+    {
+      value: "120+",
+      label: "Product sheets migrated from MySQL to Supabase, each with its own Product structured data",
+    },
+    {
+      value: "+35%",
+      label: "Organic traffic in the first phase, after the SEO work with GA4, GTM and Search Console on the PHP catalogue",
+    },
+    {
+      value: "3",
+      label: "Projects for the same client: the PHP catalogue, Sacith Lab and this rebuild",
+    },
+  ],
+  gallery: [
+    {
+      src: "/imgs/sacith-mobile.webp",
+      alt: "The Water System list, the Moon page and the English ESR page on three phones",
+      aspect: "16/10",
+    },
+    {
+      src: "/imgs/sacith-pages.webp",
+      alt: "The Download and About pages of the Sacith website",
+      aspect: "16/10",
+    },
+    {
+      src: "/imgs/sacith-news.webp",
+      alt: "The Sacith news page with the Moon family and the ESR shower drain, on a laptop",
+      aspect: "16/10",
+    },
+  ],
+  learnings: [
+    "A rebuild is a migration first. Keeping every product reachable and every URL meaningful mattered more to the client than any new feature, and settling the canonical structure before writing the first page is what made the switch safe.",
+    "GEO is mostly good SEO said plainly: clean structured data, a readable llms.txt and metadata that does not depend on JavaScript. The new part is remembering that the reader might be a model, and writing the answers it will quote.",
+    "With a long-standing client the small things carry the weight: using their words for their products, keeping every old address alive, shipping each round of feedback as something they can check. That trust is why there was a third project.",
+  ],
+};
+
 const projects: Project[] = [
   {
     slug: "newmann",
@@ -458,15 +636,28 @@ const projects: Project[] = [
   {
     slug: "sacith",
     title: "Sacith",
-    subtitle: "Product Catalog",
-    category: "Web Development · SEO",
-    year: "2024–2025",
+    subtitle: "B2B Product Catalog",
+    category: "Web Development · SEO · GEO",
+    year: "2026",
     description:
-      "Modern bilingual product catalog for Italian air-massage systems company 'Sacith S.r.l.'. Full SEO optimization with Google Analytics integration.",
-    tech: ["PHP", "MySQL", "JavaScript", "Tailwind CSS"],
-    image: "/imgs/mockupSacith.png",
+      "Bilingual B2B catalogue rebuilt in Next.js and Supabase for Italian manufacturer Sacith S.r.l.: storytelling pages for its flagship products, technical SEO on every product sheet and GEO for AI search engines.",
+    tech: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Tailwind CSS",
+      "GSAP",
+      "Framer Motion",
+      "Schema.org",
+      "Resend",
+      "Vercel",
+    ],
+    image: "/imgs/sacith-hero.webp",
     links: { live: "https://sacith.com" },
-    color: "#059669",
+    color: "#2f6bff",
+    caseStudy: sacithCaseStudy,
   },
   {
     slug: "novavice",
@@ -904,6 +1095,8 @@ const en: Dictionary = {
     githubPart: "GitHub · {part} →",
     overview: "Overview",
     challenge: "The challenge",
+    focus: "Focus",
+    focusTitle: "Where the project makes a difference",
     process: "Process",
     processTitle: "How it came together",
     decisions: "Key decisions",
